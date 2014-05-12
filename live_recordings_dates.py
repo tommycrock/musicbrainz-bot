@@ -29,7 +29,7 @@ query = """
         /* Only one linked work */
         AND NOT EXISTS (SELECT 1 FROM l_recording_work lrw2 WHERE lrw2.entity0 = r.id AND lrw2.entity1 <> lrw.entity1)
     ORDER BY r.artist_credit
-    LIMIT 250
+    LIMIT 750
 """
 
 date_re = re.compile(r'live, (\d{4})(?:-(\d{2}))?(?:-(\d{2}))?:', re.I)

@@ -44,8 +44,8 @@ WITH
     )
 SELECT ra.release_id, r.gid, r.name, r.packaging, ra.discogs_url, ac.name AS ac_name, b.processed
 FROM releases_wo_packaging ra
-JOIN s_release r ON ra.release_id = r.id
-JOIN s_artist_credit ac ON r.artist_credit=ac.id
+JOIN release r ON ra.release_id = r.id
+JOIN artist_credit ac ON r.artist_credit=ac.id
 LEFT JOIN bot_discogs_release_packaging b ON r.gid = b.release
 ORDER BY b.processed NULLS FIRST, r.artist_credit, r.id
 LIMIT 5000

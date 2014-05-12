@@ -57,6 +57,7 @@ WHERE work = %s
 ORDER BY iswc
 """
 
+# SQL query used to initialize the mapping:
 # select '"'||name ||'": ' || id || ',' from language where frequency = 2 order by id;
 SHS_MB_LANG_MAPPING = {
  "Arabic": 18,
@@ -71,7 +72,8 @@ SHS_MB_LANG_MAPPING = {
  "Greek": 159,
  "Italian": 195,
  "Japanese": 198,
- "[Multiple languages]": 284,
+ "Multiple languages": 284,
+ "None": 486,
  "Norwegian": 309,
  "Polish": 338,
  "Portuguese": 340,

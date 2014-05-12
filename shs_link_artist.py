@@ -52,7 +52,7 @@ WITH
     )
 SELECT a.id, a.gid, a.name, aws.shs_url, aws.work_id, aws.work_gid, b.processed
 FROM artists_wo_shs aws
-JOIN s_artist a ON aws.artist_id = a.id
+JOIN artist a ON aws.artist_id = a.id
 LEFT JOIN bot_shs_link_artist b ON a.gid = b.artist
 ORDER BY b.processed NULLS FIRST, a.id
 LIMIT 1000
@@ -99,7 +99,7 @@ for artist in db.execute(query):
             artist_uri = shs_artist['uri']
             break
         elif similarity2(to_unicode(shs_artist_name), to_unicode(mb_artist_name)) > 0.85:
-            print "%s => similarity = %.2f" % (shs_artist['commonName'], similarity2(to_unicode(shs_artist_name), to_unicode(mb_artist_name)))
+            print " * '%s' has a similarity of %.2f" % (shs_artist['commonName'], similarity2(to_unicode(shs_artist_name), to_unicode(mb_artist_name)))
             artist_uri = shs_artist['uri']
             break
 
