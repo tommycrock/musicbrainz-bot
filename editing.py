@@ -165,17 +165,15 @@ class MusicBrainzClient(object):
         else:
             return self._check_response()
 
-    def add_url(self, entity_type, entity_id, link_type_id, url, edit_note='', auto=False):
+    def _relationship_editor_webservice_action(self, action, link_type, edit_note, auto, entity0, entity1):
+        dta={"rel-editor.rels.0.action": action,
+             "rel-editor.rels.0.link_type": link_type,
+             "rel-editor.edit_note": edit_note,
+             "rel-editor.as_auto_editor": auto and 1 or 0}
+        dta.update(("rel-editor.rels.0.entity."+`x`+"."+k, v) for x in xrange(2) for (k,v) in [entity0,entity1][x].iteritems())
+        print dta
         try:
-            self.b.open(self.url("/relationship-editor"), data=urllib.urlencode({
-                "rel-editor.rels.0.action": "add",
-                "rel-editor.rels.0.entity.0.gid": entity_id,
-                "rel-editor.rels.0.entity.0.type": entity_type,
-                "rel-editor.rels.0.entity.1.url": url,
-                "rel-editor.rels.0.entity.1.type": "url",
-                "rel-editor.rels.0.link_type": link_type_id,
-                "rel-editor.edit_note": edit_note,
-                "rel-editor.as_auto_editor": auto and 1 or 0}))
+            self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
         except urllib2.HTTPError, e:
             if e.getcode() != 400:
                 raise Exception('unable to post edit', e)
@@ -189,6 +187,12 @@ class MusicBrainzClient(object):
             if jmsg["edits"][0]["message"] == "no changes":
                 return False
         return True
+
+    def add_url(self, entity_type, entity_id, link_type, url, edit_note='', auto=False):
+        return self._relationship_editor_webservice_action(
+            "add", link_type, edit_note, auto,
+            {"gid": entity_id,"type": entity_type},
+            {"url":url,"type":"url"})
 
     def _update_entity_if_not_set(self, update, entity_dict, entity_type, item, suffix="_id", utf8ize=False, inarray=False):
         if item in update:
