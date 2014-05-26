@@ -237,7 +237,7 @@ def submit_cover_art(release, url, types):
     if already_processed(release, url):
         colored_out(bcolors.NONE, " * skipping already submitted image '%s'" % (url,))
     else:
-        colored_out(bcolors.OKGREEN, " * Adding " + ",".join(types) + (" " if len(types)>0 else "") + "cover art '%s'" % (url,))
+        colored_out(bcolors.OKGREEN, " * Adding " + ",".join(types) + (" " if len(types) > 0 else "") + "cover art '%s'" % (url,))
         if 'discogs' in url:
             resp, content = discogs_oauth_client.request(url, 'GET')
         else:
