@@ -398,7 +398,7 @@ class MusicBrainzClient(object):
                         'length': new_track['length'] if 'length' in new_track else old_track['length'],
                         'artist_credit': new_track['artist_credit'] if 'artist_credit' in new_track else old_track['artist_credit']
                     }
-                    to['edit_sha1'] = base64.b64encode( hashlib.sha1(structureToString(to)).digest() )
+                    to['edit_sha1'] = base64.b64encode(hashlib.sha1(structureToString(to)).digest())
                     to['position'] = trackno
                     to['deleted'] = 0
                     to['number'] = new_track['number'] if 'number' in new_track else old_track['number']

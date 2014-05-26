@@ -94,7 +94,7 @@ for release in db.execute(query):
             new_mediums[-1]['tracklist'].append(new_track)
 
             discogs_track = discogs_tracks[position]        
-            if not are_similar( discogs_track['title'], mb_track['name'] ):
+            if not are_similar(discogs_track['title'], mb_track['name']):
                 colored_out(bcolors.FAIL, ' * track #%s not similar enough' % discogs_track['position'])
                 changed = False
                 break

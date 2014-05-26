@@ -164,7 +164,7 @@ LIMIT 100
 """
 
 def amz_get_info(url):   
-    params = { 'ResponseGroup': 'Images' }
+    params = {'ResponseGroup': 'Images'}
     
     m = re.match(r'^https?://(?:www.)?amazon\.(.*?)(?:\:[0-9]+)?/.*/([0-9B][0-9A-Z]{9})(?:[^0-9A-Z]|$)', url)
     if m is None:
