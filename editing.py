@@ -174,7 +174,7 @@ class MusicBrainzClient(object):
                 "rel-editor.rels.0.entity.1.url": url,
                 "rel-editor.rels.0.entity.1.type": "url",
                 "rel-editor.rels.0.link_type": link_type_id,
-                "rel-editor.edit-note": edit_note,
+                "rel-editor.edit_note": edit_note,
                 "rel-editor.as_auto_editor": auto and 1 or 0}))
         except urllib2.HTTPError, e:
             if e.getcode() != 400:
