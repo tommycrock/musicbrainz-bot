@@ -192,7 +192,7 @@ def handle_release(release):
                 sym['url'] = url
                 sym['art_type'] = art_type_map[art_type]
                 sym['qualname'] = qual2name(sym['quality'])
-                note += ("Recognized '''%(type)s:''' %(data)s from %(art_type)s cover image %(url)s\n"+
+                note += ("Recognized '''%(type)s:''' %(data)s from %(art_type)s cover image %(url)s\n" +
                          "'''Confidence:''' %(qualname)s %(quality)d [scale %(scale)s]\n") % sym
 
     if not txn_ids:

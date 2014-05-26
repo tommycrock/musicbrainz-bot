@@ -160,13 +160,13 @@ class MusicBrainzClient(object):
         self.b[prefix+"edit_note"] = edit_note.encode('utf8')
         self._as_auto_editor(prefix, auto)
         self.b.submit()
-        if already_done_msg!='default':
+        if already_done_msg != 'default':
             return self._check_response(already_done_msg)
         else:
             return self._check_response()
 
     def _relationship_editor_webservice_action(self, action, link_type, edit_note, auto, entity0, entity1):
-        dta={"rel-editor.rels.0.action": action,
+        dta = {"rel-editor.rels.0.action": action,
              "rel-editor.rels.0.link_type": link_type,
              "rel-editor.edit_note": edit_note,
              "rel-editor.as_auto_editor": auto and 1 or 0}

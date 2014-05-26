@@ -186,7 +186,7 @@ def handle_credit(src):
         return False
 
     # Make sure an edit wasn't already submitted.
-    cur.execute("SELECT EXISTS(SELECT * FROM "+config.BOT_SCHEMA_DB+".split_artists_history"+
+    cur.execute("SELECT EXISTS(SELECT * FROM "+config.BOT_SCHEMA_DB+".split_artists_history" +
                 " WHERE credit=%s AND changed=true)",
                 [src.c_id])
 
@@ -278,7 +278,7 @@ def bot_main(filter=None):
         changed = handle_credit(cred)
         # None - user cancelled edit
         if changed is not None:
-            cur2.execute("INSERT INTO "+config.BOT_SCHEMA_DB+".split_artists_history"+
+            cur2.execute("INSERT INTO "+config.BOT_SCHEMA_DB+".split_artists_history" +
                          " (artist, credit, changed, bot_version) VALUES (%s, %s, %s, %s)",
                         [cred.a_id, cred.c_id, changed, VERSION])
             db.commit()
@@ -298,7 +298,7 @@ def init_db():
     # Don't need data durability
     cur.execute("SET synchronous_commit=off")
 
-if __name__=='__main__':
+if __name__ == '__main__':
     if len(sys.argv) > 1:
         filter = sys.argv[1].decode('utf8')
     else:
