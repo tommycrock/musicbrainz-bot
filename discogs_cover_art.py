@@ -298,7 +298,8 @@ for release in db.execute(query):
                     if spotify_score > best_score:
                         front_uri = image_url
                         best_score = spotify_score
-                except urllib2.HTTPError, e: pass
+                except urllib2.HTTPError, e:
+                    pass
 
     # Evaluate iTunes
     if itunes is not None and release['barcode'] is not None and release['barcode'] != "":
