@@ -213,8 +213,8 @@ def durationToMS(string):
     return (int(m.group(1))*60 + int(m.group(2)))*1000
 
 def msToDuration(length):
-    minutes = int( length/1000/60 ) % 60
-    seconds = int( length/1000 ) % 60
+    minutes = int(length/1000/60) % 60
+    seconds = int(length/1000) % 60
     return "%02d:%02d" % (minutes, seconds)
 
 def escape_query(s):
@@ -242,7 +242,7 @@ def structureToString(obj):
     else:
         ret = []
         for key in sorted(obj.iterkeys()):
-            ret.append("%s:%s" % ( key, structureToString(obj[key]) ))
+            ret.append("%s:%s" % (key, structureToString(obj[key])))
         return '{' + ",".join(ret) + '}'
 
 def monkeypatch_mechanize():

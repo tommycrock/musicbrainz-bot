@@ -115,7 +115,7 @@ def make_html_comparison_page(mbrainz, spotify):
             f.write('<div>%s: %s (%s)</div>' %
                     (track['position'],
                      track['name'],
-                     int(track['length'] if track['length'] is not None else 0) ))
+                     int(track['length'] if track['length'] is not None else 0)))
         f.write('</div><div style="float:right;width:50%">')
         f.write('<div style="font-weight:bold">%s</div>' % spotify['name'])
         f.write('<div style="font-weight:bold">%s</div>' % spotify['artist'])
