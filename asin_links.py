@@ -192,9 +192,9 @@ def gen_item_date_sort_key(date):
 
 def amazon_get_asin(barcode, country, date):
     params = {
-        'ResponseGroup' : 'Medium,Images',
-        'SearchIndex' : 'Music',
-        'IdType' : barcode_type(barcode),
+        'ResponseGroup': 'Medium,Images',
+        'SearchIndex': 'Music',
+        'IdType': barcode_type(barcode),
     }
     items = []
     for loc in store_map_rev[country]:
@@ -380,9 +380,9 @@ def main(verbose=False):
         re_bold_import = re.compile(ur'\b(imports?)\b', re.IGNORECASE)
         text = re_bold_import.sub(ur"'''\1'''", text)
         try:
-            colored_out(bcolors.OKGREEN, u' * http://musicbrainz.org/release/%s  ->  %s' % (gid,url))
+            colored_out(bcolors.OKGREEN, u' * http://musicbrainz.org/release/%s  ->  %s' % (gid, url))
             mb.add_url('release', gid, 77, url, text)
-            db.execute("INSERT INTO bot_asin_set (gid,url) VALUES (%s,%s)", (gid,url))
+            db.execute("INSERT INTO bot_asin_set (gid,url) VALUES (%s,%s)", (gid, url))
             asins.add(url)
             edits_left -= 1
         except (urllib2.HTTPError, urllib2.URLError, socket.timeout) as e:
