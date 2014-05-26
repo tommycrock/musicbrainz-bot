@@ -168,16 +168,16 @@ class MusicBrainzClient(object):
     def add_url(self, entity_type, entity_id, link_type_id, url, edit_note='', auto=False):
         try:
             self.b.open(self.url("/relationship-editor"), data=urllib.urlencode({
-                "rel-editor.rels.0.action":"add",
-                "rel-editor.rels.0.entity.0.gid":entity_id,
-                "rel-editor.rels.0.entity.0.type":entity_type,
-                "rel-editor.rels.0.entity.1.url":url,
-                "rel-editor.rels.0.entity.1.type":"url",
-                "rel-editor.rels.0.link_type":link_type_id,
-                "rel-editor.edit-note":edit_note,
-                "rel-editor.as_auto_editor":auto and 1 or 0}))
+                "rel-editor.rels.0.action": "add",
+                "rel-editor.rels.0.entity.0.gid": entity_id,
+                "rel-editor.rels.0.entity.0.type": entity_type,
+                "rel-editor.rels.0.entity.1.url": url,
+                "rel-editor.rels.0.entity.1.type": "url",
+                "rel-editor.rels.0.link_type": link_type_id,
+                "rel-editor.edit-note": edit_note,
+                "rel-editor.as_auto_editor": auto and 1 or 0}))
         except urllib2.HTTPError, e:
-            if e.getcode()!=400:
+            if e.getcode() != 400:
                 raise Exception('unable to post edit', e)
         try:
             jmsg = json.load(self.b.response())
@@ -186,7 +186,7 @@ class MusicBrainzClient(object):
         if not jmsg.has_key('edits') or jmsg.has_key('error'):
             raise Exception('unable to post edit', jmsg)
         else:
-            if jmsg["edits"][0]["message"]=="no changes":
+            if jmsg["edits"][0]["message"] == "no changes":
                 return False
         return True
 
