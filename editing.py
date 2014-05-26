@@ -145,8 +145,10 @@ class MusicBrainzClient(object):
         return self._extract_mbid('artist')
 
     def _as_auto_editor(self, prefix, auto):
-        try: self.b[prefix+"as_auto_editor"] = ["1"] if auto else []
-        except mechanize.ControlNotFoundError: pass
+        try:
+            self.b[prefix+"as_auto_editor"] = ["1"] if auto else []
+        except mechanize.ControlNotFoundError:
+            pass
 
     def _check_response(self, already_done_msg='any changes to the data already present'):
         page = self.b.response().read()
@@ -561,8 +563,10 @@ class MusicBrainzClient(object):
         # http://stackoverflow.com/questions/9249996/mechanize-cannot-read-form-with-submitcontrol-that-is-disabled-and-has-no-value
         self._select_form("add-cover-art")
         self.b.set_all_readonly(False)
-        try: self.b['add-cover-art.as_auto_editor'] = 1 if auto else 0
-        except mechanize._form.ControlNotFoundError: pass
+        try:
+            self.b['add-cover-art.as_auto_editor'] = 1 if auto else 0
+        except mechanize._form.ControlNotFoundError:
+            pass
         submitted_types = []
         types_control = self.b.find_control(name='add-cover-art.type_id')
         for type in types:
