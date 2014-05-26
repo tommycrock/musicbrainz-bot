@@ -79,10 +79,10 @@ DISCOGS_MB_FORMATS_MAPPING = {
     'Vinyl': 7,
     '12"': 31,
     '10"': 30,
-    '7"' : 29,
-    'CD' : 1,
-    'CDr' : 33,
-    'Cassette' : 8,
+    '7"': 29,
+    'CD': 1,
+    'CDr': 33,
+    'Cassette': 8,
     'DigitalMedia': 12
 }
 

@@ -80,10 +80,10 @@ DISCOGS_MB_PACKAGING_MAPPING = {
     'jewel case': 1,
     'slim jewel case': 2,
     'digipak': 3,
-    'cardboard/paper sleeve' : 4,
-    'other' : 5,
-    'keep case' : 6,
-    'none' : 7,
+    'cardboard/paper sleeve': 4,
+    'other': 5,
+    'keep case': 6,
+    'none': 7,
 }
 
 for release in db.execute(query):

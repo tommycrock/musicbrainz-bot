@@ -385,7 +385,7 @@ class MusicBrainzClient(object):
 
             if 'tracklist' in medium:
                 tracklist_id = self.b["mediums.%s.id" % medium_no]
-                request = urllib2.Request('http://musicbrainz.org/ws/js/medium/%s' % tracklist_id, headers={"Accept" : "application/json"})
+                request = urllib2.Request('http://musicbrainz.org/ws/js/medium/%s' % tracklist_id, headers={"Accept": "application/json"})
                 data = urllib2.urlopen(request)
                 old_tracklist = json.load(data)
 
@@ -526,7 +526,7 @@ class MusicBrainzClient(object):
         cover_art_id = int((time.time()-1327528905)*100)
 
         # Step 1: Request POST fields for CAA from http://musicbrainz.org/ws/js/cover-art-upload
-        request = urllib2.Request('http://musicbrainz.org/ws/js/cover-art-upload/%s?image_id=%s&mime_type=%s&redirect=true' % (release_gid, cover_art_id, mime_type), headers={"Accept" : "application/json"})
+        request = urllib2.Request('http://musicbrainz.org/ws/js/cover-art-upload/%s?image_id=%s&mime_type=%s&redirect=true' % (release_gid, cover_art_id, mime_type), headers={"Accept": "application/json"})
         data = urllib2.urlopen(request)
         postfields = json.load(data)['formdata']
 
