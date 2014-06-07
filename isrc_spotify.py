@@ -72,8 +72,10 @@ engine = sqlalchemy.create_engine(cfg.MB_DB)
 db = engine.connect()
 db.execute("SET search_path TO musicbrainz, %s" % cfg.BOT_SCHEMA_DB)
 
+
 def similarity(a, b):
     return int(similarity2(to_unicode(a), to_unicode(b)) * 100)
+
 
 def compare_data(mb_release, sp_release):
     name = similarity(mb_release['name'], sp_release['name'])
@@ -93,6 +95,7 @@ def compare_data(mb_release, sp_release):
         track_sim.append(int(track[i] * 0.50) + int(track_time_sim * 0.50))
     return int(name * 0.10) + int(artist * 0.10) + int(sum(track_sim) / len(mb_release['tracks']) * 0.80)
 
+
 def submit_isrcs(mb_release, sp_release):
     mbids = []
     for track in mb_release['tracks']:
@@ -105,6 +108,7 @@ def submit_isrcs(mb_release, sp_release):
                 this_isrc.append(extid['id'].upper())
         isrcs.append(this_isrc)
     musicbrainzngs.submit_isrcs(dict(zip(mbids, isrcs)))
+
 
 def make_html_comparison_page(mbrainz, spotify):
     with codecs.open('compare.html', mode='w', encoding='utf-8') as f:
@@ -124,6 +128,7 @@ def make_html_comparison_page(mbrainz, spotify):
                     (track['disc-number'], track['track-number'],
                      track['name'], int(track['length']*1000)))
         f.write('</div></body></html>')
+
 
 def save_processing(mb_release):
     if mb_release['processed'] is None:

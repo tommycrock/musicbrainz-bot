@@ -37,6 +37,7 @@ CREATE TABLE mbbot.bot_wp_wikidata_links (
 );
 """
 
+
 def main(ENTITY_TYPE):
 
     entity_type_table = ENTITY_TYPE.replace('-', '_')

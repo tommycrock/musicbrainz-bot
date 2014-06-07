@@ -163,6 +163,7 @@ ORDER BY b.processed NULLS FIRST, r.artist_credit, r.name
 LIMIT 100
 """
 
+
 def amz_get_info(url):   
     params = {'ResponseGroup': 'Images'}
     
@@ -190,6 +191,7 @@ def amz_get_info(url):
         barcode = item.UPC
     return (item.LargeImage, barcode)
 
+
 def discogs_get_primary_image(url):
     if url is None:
         return None
@@ -205,6 +207,7 @@ def discogs_get_primary_image(url):
             return release.data['images'][0]
     return None
     
+
 def discogs_get_secondary_images(url):
     if url is None:
         return []
@@ -226,12 +229,15 @@ def discogs_get_secondary_images(url):
                 images = images[1:]
     return images
 
+
 def save_processed(release, url):
     db.execute("INSERT INTO bot_release_artwork_url (release, url) VALUES (%s, %s)", (release, url))
+
 
 def already_processed(release, url):
     res = db.execute("SELECT 1 FROM bot_release_artwork_url WHERE release = %s AND url = %s", (release, url))
     return res.scalar() is not None
+
 
 def submit_cover_art(release, url, types):
     if already_processed(release, url):

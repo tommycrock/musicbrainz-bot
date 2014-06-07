@@ -79,6 +79,7 @@ discogs_release_group_set = set((gid, url) for gid, url in db.execute('''SELECT 
 discogs_release_group_missing = set(gid for gid, in db.execute('''SELECT gid FROM bot_discogs_release_group_missing'''))
 discogs_release_group_problematic = set(gid for gid, in db.execute('''SELECT gid FROM bot_discogs_release_group_problematic'''))
 
+
 def asciipunct(s):
     mapping = {
         u"…": u"...",
@@ -103,16 +104,19 @@ def asciipunct(s):
         s = s.replace(orig, repl)
     return s
 
+
 def are_similar(name1, name2):
     name1, name2 = (asciipunct(s.strip().lower()) for s in (name1, name2))
     ratio = Levenshtein.jaro_winkler(name1, name2)
     return ratio >= 0.8 or name1 in name2 or name2 in name1
+
 
 def discogs_artists_str(artists):
     if len(artists) > 1:
         return ' and '.join([', '.join([a.name for a in artists[:-1]]), artists[-1].name])
     else:
         return artists[0].name
+
 
 def discogs_get_master(release_urls):
     for release_url in release_urls:
@@ -123,6 +127,7 @@ def discogs_get_master(release_urls):
             master = release.master
             if master:
                 yield (master.title, master._id, discogs_artists_str(master.artists))
+
 
 def main(verbose=False):
     rgs = [(rg, gid, name) for rg, gid, name in db.execute(query_rg_without_master)]

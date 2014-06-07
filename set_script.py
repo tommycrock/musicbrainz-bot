@@ -50,6 +50,8 @@ WHERE r.id = %s
 
 utils.parse_scripts()
 script_range_to_iso_code = sorted((range, iso15924.unicode_alias_to_iso_code[script]) for script, ranges in utils.script_ranges.items() for range in ranges)
+
+
 def get_scripts(text):
     d = defaultdict(int)
     for u in text:
@@ -84,6 +86,7 @@ stats = defaultdict(int)
 query_scripts = '''SELECT DISTINCT id, iso_code, name FROM script'''
 iso15924_to_mb = dict((iso_code, {'id': script_id, 'name': name}) for (script_id, iso_code, name) in db.execute(query_scripts))
 mb_to_iso15924 = dict((v['id'], k) for k, v in iso15924_to_mb.items())
+
 
 def main(verbose=False):
     r_by_ac = defaultdict(list)

@@ -29,6 +29,7 @@ CREATE TABLE bot_isrc_zeroinch_problematic (
 );
 '''
 
+
 class MusicBrainzWebservice(object):
     def __init__(self, username, password, server='http://musicbrainz.org'):
         self.user_agent = 'zeroinch-bot/1.0 ( %s/user/%s )' % (server, username)
@@ -42,8 +43,10 @@ class MusicBrainzWebservice(object):
         q = Query(self.ws)
         q.submitISRCs(tracks2isrcs)
 
+
 def isrc_valid(isrc):
     return re.match(r'[A-Z]{2}[A-Z0-9]{3}[0-9]{7}', isrc)
+
 
 class ZeroInch(object):
     def __init__(self):
@@ -107,6 +110,7 @@ db.execute('SET search_path TO musicbrainz')
 zeroinch = ZeroInch()
 mb = MusicBrainzClient(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
 ws = MusicBrainzWebservice(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
+
 
 def identify_isrc_edit(isrcs):
     return lambda edit_nr, text: set(isrcs) == set(re.findall(r'<a href="'+cfg.MB_SITE+r'/isrc/([A-Z0-9]{12})">', text))

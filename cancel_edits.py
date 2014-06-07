@@ -7,6 +7,7 @@ from mbbot.utils.pidfile import PIDFile
 from utils import out
 import config as cfg
 
+
 def main(args):
     if not args:
         out('Usage:   cancel_edits.py <edit_number edit_note>...\n')

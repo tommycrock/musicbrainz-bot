@@ -70,6 +70,7 @@ WHERE url.url IN (
 )
 '''
 
+
 def asciipunct(s):
     mapping = {
         u"…": u"...",
@@ -94,6 +95,7 @@ def asciipunct(s):
         s = s.replace(orig, repl)
     return s
 
+
 def are_similar(name1, name2):
     name1, name2 = (asciipunct(s.strip().lower()) for s in (name1, name2))
     ratio = Levenshtein.jaro_winkler(name1, name2)
@@ -107,6 +109,7 @@ MB_ENC_NEVER  = '#$%&+,/:;=?@[]'
 _hexdig = '0123456789ABCDEFabcdef'
 _hextochr = dict((a + b, chr(int(a + b, 16)))
                  for a in _hexdig for b in _hexdig)
+
 
 def unquote(s, safe=''):
     """unquote('abc%20def') -> 'abc def'."""
@@ -128,11 +131,14 @@ def unquote(s, safe=''):
             s += unichr(int(item[:2], 16)) + item[2:]
     return s
 
+
 def musicbrainz_quote(s):
     return unicode(urllib.quote(unquote(s.encode('utf-8'), MB_ENC_NEVER), MB_UNENCODE+MB_ENC_NEVER), 'utf-8')
 
+
 def discogs_quote(name):
     return unicode(urllib.quote_plus(urllib.unquote_plus(name.encode('utf-8'))), 'utf-8')
+
 
 def combine_names(names):
     if len(names) > 1:
@@ -140,14 +146,17 @@ def combine_names(names):
     else:
         return u'“'+names[0]+u'”'
 
+
 def artist_credit(ac):
     return u''.join(u'%s%s' % (name, join_phrase if join_phrase else u'') for name, join_phrase in db.execute('''SELECT an.name,acn.join_phrase from artist_credit ac JOIN artist_credit_name acn ON acn.artist_credit = ac.id JOIN artist_name an ON acn.name = an.id WHERE ac.id = %s ORDER BY position''', ac))
+
 
 def discogs_artist_url(name):
     return u'http://www.discogs.com/artist/%s' % musicbrainz_quote(discogs_quote(name))
 
 discogs_artist_set = set((gid, url) for gid, url in db.execute('''SELECT gid, url FROM bot_discogs_artist_set'''))
 discogs_artist_problematic = set(gid for gid, in db.execute('''SELECT gid FROM bot_discogs_artist_problematic'''))
+
 
 def main(verbose=False):
     d = defaultdict(dict)

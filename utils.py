@@ -7,6 +7,7 @@ import sys
 import os
 import unicodedata
 
+
 def mangle_name(s):
     s = unaccent(s.lower())
     s = re.sub(r'\(feat\. [^)]+\)$', '', s)
@@ -41,6 +42,8 @@ def join_names(type, strings):
 
 script_ranges = {}
 script_regexes = {}
+
+
 def parse_scripts():
     if script_ranges:
         # Already parsed
@@ -61,6 +64,7 @@ def parse_scripts():
             script_ranges[script][-1] = (script_ranges[script][-1][0], range[1])
         else:
             script_ranges.setdefault(script, []).append(range)
+
 
 def is_in_script(text, scripts):
     parse_scripts()
@@ -116,6 +120,7 @@ def out(*args):
     sys.stdout.write(' '.join(args) + '\n')
     sys.stdout.flush()
 
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -125,10 +130,12 @@ class bcolors:
     ENDC = '\033[0m'
     NONE = ''
 
+
 def colored_out(color, *args):
     args = [unicode(a).encode(locale.getpreferredencoding()) for a in args]
     sys.stdout.write(color + ' '.join(args) + bcolors.ENDC + '\n')
     sys.stdout.flush()
+
 
 def get_page_content_from_cache(title, wp_lang):
     key = title.encode('utf-8', 'xmlcharrefreplace').replace('/', '_')
@@ -168,6 +175,7 @@ def extract_page_title(url, wp_lang):
         return None
     return urllib.unquote(url[len(prefix):].encode('utf8')).decode('utf8')
 
+
 def wp_is_canonical_page(title, page_orig):
     page = mangle_name(page_orig)
     if 'redirect' in page:
@@ -180,6 +188,7 @@ def wp_is_canonical_page(title, page_orig):
         return False, "disambiguation page"
     return True, ""
 
+
 def quote_page_title(title):
     return urllib.quote(title.encode('utf8').replace(' ', '_'), '/$,:;@')
 
@@ -188,6 +197,8 @@ _unaccent_dict = {u'Æ': u'AE', u'æ': u'ae', u'Œ': u'OE', u'œ': u'oe', u'ß':
                 u"„": u"\"", u"′": u"'", u"″": u"\"", u"‹": u"<", u"›": u">", u"‐": u"-",
                 u"‒": u"-", u"–": u"-", u"−": u"-", u"—": u"-", u"―": u"-"}
 _re_latin_letter = re.compile(r"^(LATIN [A-Z]+ LETTER [A-Z]+) WITH")
+
+
 def unaccent(string):
     """Remove accents ``string``."""
     result = []
@@ -206,16 +217,20 @@ def unaccent(string):
     return "".join(result)
 
 _re_duration = re.compile(r"^(\d{1,2})\:(\d{2})")
+
+
 def durationToMS(string):
     m = _re_duration.match(string)
     if not m:
         return None
     return (int(m.group(1))*60 + int(m.group(2)))*1000
 
+
 def msToDuration(length):
     minutes = int(length/1000/60) % 60
     seconds = int(length/1000) % 60
     return "%02d:%02d" % (minutes, seconds)
+
 
 def escape_query(s):
     s = re.sub(r'\bOR\b', 'or', s)
@@ -224,6 +239,7 @@ def escape_query(s):
     s = re.sub(r'\+', '\\+', s)
     s = re.sub(r'\-', '\\-', s)
     return s
+
 
 def structureToString(obj):
     if obj is None:
@@ -244,6 +260,7 @@ def structureToString(obj):
         for key in sorted(obj.iterkeys()):
             ret.append("%s:%s" % (key, structureToString(obj[key])))
         return '{' + ",".join(ret) + '}'
+
 
 def monkeypatch_mechanize():
     """Work-around for a mechanize 0.2.5 bug. See: https://github.com/jjlee/mechanize/pull/58"""

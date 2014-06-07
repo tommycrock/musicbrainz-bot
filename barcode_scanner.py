@@ -43,11 +43,13 @@ except IOError: # Not found? Try writing
     statefile = open(DBFILE, 'w')
     state = set()
 
+
 def done(line):
     assert line not in state
     statefile.write("%s\n" % line)
     statefile.flush()
     state.add(line.split('#', 1)[0].strip())
+
 
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
@@ -61,6 +63,7 @@ def pretty_size(size):
 symtypes = (zbar.Symbol.EAN13,  zbar.Symbol.EAN8, zbar.Symbol.ISBN10,
             zbar.Symbol.ISBN13, zbar.Symbol.UPCA, zbar.Symbol.UPCE,
             zbar.Symbol.CODE39)
+
 
 def scan_barcode(img):
     gray = img.convert('L')
@@ -96,6 +99,7 @@ def scan_barcode(img):
 
     return symbols.values()
 
+
 def fetch_image(release, art_id):
     url = '%s/release/%s/%d.jpg' % (CAA_SITE, release.gid, art_id)
     filename = os.path.join(CAA_CACHE, '%d.jpg') % art_id
@@ -127,6 +131,7 @@ def fetch_image(release, art_id):
 
     return f, url
 
+
 def get_annotation(rel_id):
     cur = db.cursor()
     cur.execute("""
@@ -143,6 +148,7 @@ def get_annotation(rel_id):
         return ann[0]
     return None
 
+
 def qual2name(quality):
     """Converts quality number to junk/low/medium/high"""
     if quality < QUALITY_THRESHOLD:
@@ -153,6 +159,7 @@ def qual2name(quality):
         return 'medium'
     else:
         return 'high'
+
 
 def handle_release(release):
     # May have multiple cover images with the same barcode
@@ -239,6 +246,7 @@ def handle_release(release):
         for txn_id in txn_ids:
             done(txn_id)
 
+
 def bot_main():
     print "Initializing..."
     init_db()
@@ -272,6 +280,7 @@ def bot_main():
     for release in cur:
         handle_release(release)
 
+
 def init_db():
     global db, art_type_map
 
@@ -279,6 +288,7 @@ def init_db():
     cur = db.cursor()
     cur.execute("SELECT id, name FROM art_type")
     art_type_map = dict(cur.fetchall())
+
 
 def init_mb():
     global mb

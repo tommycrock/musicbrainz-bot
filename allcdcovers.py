@@ -33,6 +33,7 @@ ACC_CACHE = 'acc-cache'
 
 utils.monkeypatch_mechanize()
 
+
 def re_find1(regexp, string):
     m = re.findall(regexp, string)
     if len(m) != 1:
@@ -45,6 +46,7 @@ def re_find1(regexp, string):
         else:
             raise AssertionError("Expression %s matched %d times: %r" % (pat, len(m), string))
     return m[0]
+
 
 def create_parent_dir(filename):
     dirname = os.path.dirname(filename)
@@ -61,6 +63,7 @@ except IOError: # Not found? Try writing
     create_parent_dir(DBFILE)
     statefile = open(DBFILE, 'w')
     state = set()
+
 
 def done(line):
     assert line not in state
@@ -79,6 +82,7 @@ acc_download_re = '"(/download/[0-9a-f]{32}/%s/[0-9a-f]{32}/[0-9a-f]+/([^/-]+)-(
 # Content-Disposition: inline; filename=allcdcovers.jpg
 disposition_re = '(?:; ?|^)filename=((?:[^/]+).jpg)'
 
+
 def fix_title(title):
     if title.startswith("Download "):
         title = title[len("Download "):]
@@ -87,6 +91,8 @@ def fix_title(title):
     return title
 
 ERR_SHA1 = '5dd9c1734067f7a6ee8791961130b52f804211ce'
+
+
 def download_cover(release_id, typ, resp=None, data=None):
     href, name, dtyp = re_find1(acc_download_re % re.escape(release_id), data)
 
@@ -129,6 +135,7 @@ def download_cover(release_id, typ, resp=None, data=None):
 
     return cov
 
+
 def fetch_covers(base_url):
     release_id, typ = re_find1(acc_url_rec, base_url)
 
@@ -155,6 +162,7 @@ def fetch_covers(base_url):
 
 #### IMAGE PROCESSING
 
+
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
     suffixes = [('', 2**10), ('k', 2**20), ('M', 2**30), ('G', 2**40), ('T', 2**50)]
@@ -169,6 +177,7 @@ if zbar:
                 zbar.Symbol.ISBN13, zbar.Symbol.UPCA, zbar.Symbol.UPCE)
 else:
     symtypes = ()
+
 
 def scan_barcode(img):
     gray = img.convert('L')
@@ -185,6 +194,7 @@ def scan_barcode(img):
         codes.append((sym.type, sym.data))
 
     return codes
+
 
 def annotate_image(filename):
     """Returns image information as dict"""
@@ -224,11 +234,15 @@ ordering = {
     'inlay': 3,
     'cd': 4,
 }
+
+
 def cov_order(cov):
     typ = cov['type']
     return ordering[typ.split('_', 1)[0]], typ
 
 COMMENT = ""
+
+
 def upload_covers(covers, mbid):
     for cov in sorted(covers, key=cov_order):
         upload_id = "%s %s" % (mbid, cov['referrer'])
@@ -278,6 +292,7 @@ def upload_covers(covers, mbid):
 
 #### BARCODE MATCHING
 
+
 def find_mbid_by_barcode(barcodes):
     if psycopg2 is None:
         print "Warning: psycopg2 could not be imported, skipping barcode lookup"
@@ -323,6 +338,7 @@ def find_mbid_by_barcode(barcodes):
         query = urllib.quote_plus(' OR '.join(lookup))
         print "Please go here: %s/search?type=release&query=%s" % (cfg.MB_SITE, query)
 
+
 def handle_acc_covers(acc_url, mbids):
     print "Downloading from", acc_url
     covers = fetch_covers(acc_url)
@@ -351,12 +367,15 @@ def handle_acc_covers(acc_url, mbids):
         upload_covers(covers, mbid)
         print "Done!", mburl
 
+
 def print_help():
     print "Usage: %s allcdcovers_url [mbid ...]" % sys.argv[0]
     print "MBIDs can be given as musicbrainz.org URLs, will be automatically parsed."
     print "Example: %s http://www.allcdcovers.com/show/160217/boards_of_canada_twoism_2002_retail_cd/front https://musicbrainz.org/release/a95dbc6e-3066-46ea-91ed-cfb9539f0c7c" % sys.argv[0]
 
 uuid_rec = re.compile('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+
+
 def bot_main():
     if len(sys.argv) <= 1 or '--help' in sys.argv or '-h' in sys.argv:
         sys.exit(1)
@@ -382,6 +401,7 @@ def bot_main():
     init_br()
     handle_acc_covers(acc_url, mbids)
 
+
 def init_br():
     global br
 
@@ -389,6 +409,7 @@ def init_br():
     br.set_handle_robots(False) # no robots
     br.set_handle_refresh(False) # can sometimes hang without this
     br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
+
 
 def init_mb():
     global mb

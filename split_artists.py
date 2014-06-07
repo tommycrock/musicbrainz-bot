@@ -33,8 +33,10 @@ import config
 
 ####
 
+
 def clean_link_phrase(phrase):
     return re.sub(r'\{[^}]+\}\s*', '', phrase).strip()
+
 
 def get_score(src, dest):
     cur = db.cursor(cursor_factory=NamedTupleCursor)
@@ -89,6 +91,7 @@ def get_score(src, dest):
 
     return score, rels, comment
 
+
 def find_best_artist(src, name):
     cur = db.cursor(cursor_factory=NamedTupleCursor)
     cur.execute("""\
@@ -127,6 +130,7 @@ def find_best_artist(src, name):
         print "  SKIP, found %d positive matches for %s (%d total)" % (len(matches), name, cur.rowcount)
         return None, None, None
 
+
 def prompt(question):
     answer = None
     while answer not in ['y', 'n']:
@@ -134,6 +138,7 @@ def prompt(question):
         answer = raw_input().strip()
 
     return answer == 'y'
+
 
 def find_credit_matches(cred, comment):
     del_rels = []
@@ -164,6 +169,7 @@ def find_credit_matches(cred, comment):
     cred_tx = (cred.gid, cred.c_id, [a.id for a in arts], names, joins, comment.strip())
 
     return cred_tx, del_rels
+
 
 def handle_credit(src):
     cur = db.cursor(cursor_factory=NamedTupleCursor)
@@ -260,6 +266,7 @@ ORDER BY ac.ref_count, r_count, t_count
 
 VERSION = 1
 
+
 def bot_main(filter=None):
     init_db()
 
@@ -283,10 +290,12 @@ def bot_main(filter=None):
                         [cred.a_id, cred.c_id, changed, VERSION])
             db.commit()
 
+
 def init_mb():
     global mb
     print "Logging in..."
     mb = MusicBrainzClient(config.MB_USERNAME, config.MB_PASSWORD, config.MB_SITE)
+
 
 def init_db():
     global db

@@ -52,6 +52,7 @@ ORDER BY b.processed NULLS FIRST, r.artist_credit, r.id, ra.position
 LIMIT 1000
 """
 
+
 def discogs_get_medium_format(release, medium_no):
     if len(release.data['formats']) > 1:
         return None

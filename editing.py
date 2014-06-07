@@ -15,6 +15,7 @@ from utils import structureToString
 from datetime import datetime
 from mbbot.guesscase import guess_artist_sort_name
 
+
 def test_plain_jpeg(h, f):
     """Without this, imghdr only recognizes images with JFIF/Exif header. http://bugs.python.org/issue16512"""
     if h.startswith('\xff\xd8'):

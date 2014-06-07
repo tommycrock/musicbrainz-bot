@@ -52,10 +52,12 @@ html_escape_table = {
     u'<': u'&lt;',
 }
 
+
 def html_escape(text):
     return u''.join(html_escape_table.get(c, c) for c in text)
 
 cc_removed = set((gid, url) for gid, url in db.execute('''SELECT gid, url FROM bot_cc_removed'''))
+
 
 def main(verbose=False):
     releases = [(r, gid, ac, name, url, rel_id) for r, gid, ac, name, url, rel_id in db.execute(query_releases_with_cc)]

@@ -89,6 +89,7 @@ artist_type_ids = {}
 for id, code in db.execute("SELECT id, lower(name) FROM artist_type"):
     artist_type_ids[code] = id
 
+
 def main():
     seen = set()
     for artist in db.execute(query):
