@@ -165,12 +165,34 @@ class MusicBrainzClient(object):
         else:
             return self._check_response()
 
-    def add_url(self, entity_type, entity_id, link_type_id, url, edit_note='', auto=False):
-        self.b.open(self.url("/edit/relationship/create_url", entity=entity_id, type=entity_type))
-        self._select_form("create_url")
-        self.b["ar.link_type_id"] = [str(link_type_id)]
-        self.b["ar.url"] = str(url)
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.',auto,edit_note,'already exists')
+    def _relationship_editor_webservice_action(self, action, link_type, edit_note, auto, entity0, entity1):
+        dta={"rel-editor.rels.0.action": action,
+             "rel-editor.rels.0.link_type": link_type,
+             "rel-editor.edit_note": edit_note,
+             "rel-editor.as_auto_editor": auto and 1 or 0}
+        dta.update(("rel-editor.rels.0.entity."+`x`+"."+k, v) for x in xrange(2) for (k,v) in [entity0,entity1][x].iteritems())
+        print dta
+        try:
+            self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
+        except urllib2.HTTPError, e:
+            if e.getcode() != 400:
+                raise Exception('unable to post edit', e)
+        try:
+            jmsg = json.load(self.b.response())
+        except ValueError, e:
+            raise Exception('unable to parse response as JSON', e)
+        if not jmsg.has_key('edits') or jmsg.has_key('error'):
+            raise Exception('unable to post edit', jmsg)
+        else:
+            if jmsg["edits"][0]["message"] == "no changes":
+                return False
+        return True
+
+    def add_url(self, entity_type, entity_id, link_type, url, edit_note='', auto=False):
+        return self._relationship_editor_webservice_action(
+            "add", link_type, edit_note, auto,
+            {"gid": entity_id,"type": entity_type},
+            {"url":url,"type":"url"})
 
     def _update_entity_if_not_set(self, update, entity_dict, entity_type, item, suffix="_id", utf8ize=False, inarray=False):
         if item in update:
