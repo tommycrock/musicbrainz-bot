@@ -159,6 +159,7 @@ class MusicBrainzClient(object):
             else:
                 return False
         return True
+
     def _edit_note_and_auto_editor_and_submit_and_check_response(self, prefix, auto, edit_note, already_done_msg='default'):
         self.b[prefix+"edit_note"] = edit_note.encode('utf8')
         self._as_auto_editor(prefix, auto)
