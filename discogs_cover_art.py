@@ -164,7 +164,7 @@ LIMIT 100
 """
 
 
-def amz_get_info(url):   
+def amz_get_info(url):
     params = {'ResponseGroup': 'Images'}
     
     m = re.match(r'^https?://(?:www.)?amazon\.(.*?)(?:\:[0-9]+)?/.*/([0-9B][0-9A-Z]{9})(?:[^0-9A-Z]|$)', url)
@@ -172,7 +172,7 @@ def amz_get_info(url):
         return (None, None)
         
     locale = m.group(1).replace('co.', '').replace('com', 'us')
-    asin = m.group(2)   
+    asin = m.group(2)
     amazon_api = RetryAPI(cfg.AWS_KEY, cfg.AWS_SECRET_KEY, locale, cfg.AWS_ASSOCIATE_TAG)
     
     try:

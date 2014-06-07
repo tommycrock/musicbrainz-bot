@@ -85,7 +85,7 @@ for release in db.execute(query):
     discogs_tracks = discogs_get_tracklist(release['discogs_url'])
     if (len(discogs_tracks) != release['track_count']):
         colored_out(bcolors.HEADER, ' * number of tracks mismatches (Discogs: %s vs MB: %s)' % (len(discogs_tracks), release['track_count']))
-    else:    
+    else:
         changed = False
         new_mediums = []
         position = 0
@@ -95,7 +95,7 @@ for release in db.execute(query):
                 new_mediums.append({'tracklist': []})
             new_mediums[-1]['tracklist'].append(new_track)
 
-            discogs_track = discogs_tracks[position]        
+            discogs_track = discogs_tracks[position]
             if not are_similar(discogs_track['title'], mb_track['name']):
                 colored_out(bcolors.FAIL, ' * track #%s not similar enough' % discogs_track['position'])
                 changed = False
