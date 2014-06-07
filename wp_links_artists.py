@@ -53,7 +53,7 @@ if no_country_filter:
     # Hack to avoid having an SQL error with an empty IN clause ()
     in_country_clause = 'TRUE'
 else:
-    placeHolders = ','.join( ['%s'] * len(acceptable_countries_for_lang[wp_lang]) )
+    placeHolders = ','.join(['%s'] * len(acceptable_countries_for_lang[wp_lang]))
     in_country_clause = "%s IN (%s)" % ('iso.code', placeHolders)
     query_params.extend(acceptable_countries_for_lang[wp_lang])
 query_params.extend((wp_lang, wp_lang))

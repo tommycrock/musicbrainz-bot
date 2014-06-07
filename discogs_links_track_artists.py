@@ -232,7 +232,7 @@ def main(verbose=False):
         text += u'MBrainz: “%s” by “%s”\n\n' % (t_name, ac_name)
         text += u'[1] http://musicbrainz.org/release/%s\n[2] %s' % (r_gid, url)
         try:
-            out(u'http://musicbrainz.org/artist/%s  ->  %s' % (a_gid,discogs_url))
+            out(u'http://musicbrainz.org/artist/%s  ->  %s' % (a_gid, discogs_url))
             mb.add_url('artist', a_gid, 180, discogs_url.encode('utf-8'), text)
             db.execute("INSERT INTO bot_discogs_artist_set (gid,url) VALUES (%s,%s)", (a_gid, discogs_url))
         except (urllib2.HTTPError, urllib2.URLError, socket.timeout) as e:

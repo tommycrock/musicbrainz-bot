@@ -164,7 +164,7 @@ LIMIT 100
 """
 
 def amz_get_info(url):   
-    params = { 'ResponseGroup' : 'Images' }
+    params = {'ResponseGroup': 'Images'}
     
     m = re.match(r'^https?://(?:www.)?amazon\.(.*?)(?:\:[0-9]+)?/.*/([0-9B][0-9A-Z]{9})(?:[^0-9A-Z]|$)', url)
     if m is None:
@@ -237,7 +237,7 @@ def submit_cover_art(release, url, types):
     if already_processed(release, url):
         colored_out(bcolors.NONE, " * skipping already submitted image '%s'" % (url,))
     else:
-        colored_out(bcolors.OKGREEN, " * Adding " + ",".join(types) + (" " if len(types)>0 else "") + "cover art '%s'" % (url,))
+        colored_out(bcolors.OKGREEN, " * Adding " + ",".join(types) + (" " if len(types) > 0 else "") + "cover art '%s'" % (url,))
         if 'discogs' in url:
             resp, content = discogs_oauth_client.request(url, 'GET')
         else:
@@ -298,7 +298,8 @@ for release in db.execute(query):
                     if spotify_score > best_score:
                         front_uri = image_url
                         best_score = spotify_score
-                except urllib2.HTTPError, e: pass
+                except urllib2.HTTPError, e:
+                    pass
 
     # Evaluate iTunes
     if itunes is not None and release['barcode'] is not None and release['barcode'] != "":

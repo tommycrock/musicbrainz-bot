@@ -53,7 +53,7 @@ html_escape_table = {
 }
 
 def html_escape(text):
-    return u''.join(html_escape_table.get(c,c) for c in text)
+    return u''.join(html_escape_table.get(c, c) for c in text)
 
 cc_removed = set((gid, url) for gid, url in db.execute('''SELECT gid, url FROM bot_cc_removed'''))
 
@@ -147,7 +147,7 @@ def main(verbose=False):
             if (gid, original_url) not in cc_removed:
                 text = u'Download and License relationship are already set, so this relationship is not necessary anymore.'
                 mb.remove_relationship(rel_id, 'release', 'url', text)
-                db.execute("INSERT INTO bot_cc_removed (gid,url) VALUES (%s,%s)", (gid,original_url))
+                db.execute("INSERT INTO bot_cc_removed (gid,url) VALUES (%s,%s)", (gid, original_url))
                 cc_removed.add((gid, original_url))
 
 if __name__ == '__main__':

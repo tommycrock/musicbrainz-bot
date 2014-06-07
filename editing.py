@@ -145,8 +145,10 @@ class MusicBrainzClient(object):
         return self._extract_mbid('artist')
 
     def _as_auto_editor(self, prefix, auto):
-        try: self.b[prefix+"as_auto_editor"] = ["1"] if auto else []
-        except mechanize.ControlNotFoundError: pass
+        try:
+            self.b[prefix+"as_auto_editor"] = ["1"] if auto else []
+        except mechanize.ControlNotFoundError:
+            pass
 
     def _check_response(self, already_done_msg='any changes to the data already present'):
         page = self.b.response().read()
@@ -160,17 +162,17 @@ class MusicBrainzClient(object):
         self.b[prefix+"edit_note"] = edit_note.encode('utf8')
         self._as_auto_editor(prefix, auto)
         self.b.submit()
-        if already_done_msg!='default':
+        if already_done_msg != 'default':
             return self._check_response(already_done_msg)
         else:
             return self._check_response()
 
     def _relationship_editor_webservice_action(self, action, link_type, edit_note, auto, entity0, entity1):
-        dta={"rel-editor.rels.0.action": action,
+        dta = {"rel-editor.rels.0.action": action,
              "rel-editor.rels.0.link_type": link_type,
              "rel-editor.edit_note": edit_note,
              "rel-editor.as_auto_editor": auto and 1 or 0}
-        dta.update(("rel-editor.rels.0.entity."+`x`+"."+k, v) for x in xrange(2) for (k,v) in [entity0,entity1][x].iteritems())
+        dta.update(("rel-editor.rels.0.entity."+`x`+"."+k, v) for x in xrange(2) for (k, v) in [entity0, entity1][x].iteritems())
         print dta
         try:
             self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
@@ -191,8 +193,8 @@ class MusicBrainzClient(object):
     def add_url(self, entity_type, entity_id, link_type, url, edit_note='', auto=False):
         return self._relationship_editor_webservice_action(
             "add", link_type, edit_note, auto,
-            {"gid": entity_id,"type": entity_type},
-            {"url":url,"type":"url"})
+            {"gid": entity_id, "type": entity_type},
+            {"url": url, "type": "url"})
 
     def _update_entity_if_not_set(self, update, entity_dict, entity_type, item, suffix="_id", utf8ize=False, inarray=False):
         if item in update:
@@ -210,7 +212,7 @@ class MusicBrainzClient(object):
         if item in update:
             prefix = "edit-artist.period."+item
             if self.b[prefix+".year"]:
-                print " * "+item.replace('_',' ')+" year already set, not changing"
+                print " * "+item.replace('_', ' ')+" year already set, not changing"
                 return False
             self.b[prefix+".year"] = str(artist[item+'_year'])
             if artist[item+'_month']:
@@ -223,17 +225,17 @@ class MusicBrainzClient(object):
         self.b.open(self.url("/artist/%s/edit" % (artist['gid'],)))
         self._select_form("/edit")
         self.b.set_all_readonly(False)
-        if not self._update_entity_if_not_set(update,artist,'artist','area'):
+        if not self._update_entity_if_not_set(update, artist, 'artist', 'area'):
             return
-        for item in ['type','gender']:
-            if not self._update_entity_if_not_set(update,artist,'artist',item, inarray=True):
+        for item in ['type', 'gender']:
+            if not self._update_entity_if_not_set(update, artist, 'artist', item, inarray=True):
                 return
         for item_prefix in ['begin', 'end']:
             if not self._update_artist_date_if_not_set(update, artist, item_prefix):
                 return
-        if not self._update_entity_if_not_set(update,artist,'artist', 'comment','',utf8ize=True):
+        if not self._update_entity_if_not_set(update, artist, 'artist', 'comment', '', utf8ize=True):
             return
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-artist.',auto,edit_note)
+        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-artist.', auto, edit_note)
 
     def edit_artist_credit(self, entity_id, credit_id, ids, names, join_phrases, edit_note):
         assert len(ids) == len(names) == len(join_phrases)+1
@@ -270,7 +272,7 @@ class MusicBrainzClient(object):
             print " * already set, not changing"
             return
         self.b["edit-artist.type_id"] = [str(type_id)]
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-artist.',auto,edit_note)
+        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-artist.', auto, edit_note)
 
     def edit_url(self, entity_id, old_url, new_url, edit_note, auto=False):
         self.b.open(self.url("/url/%s/edit" % (entity_id,)))
@@ -282,17 +284,17 @@ class MusicBrainzClient(object):
             print " * already set, not changing"
             return
         self.b["edit-url.url"] = str(new_url)
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-url.',auto,edit_note)
+        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-url.', auto, edit_note)
 
     def edit_work(self, work, update, edit_note, auto=False):
         self.b.open(self.url("/work/%s/edit" % (work['gid'],)))
         self._select_form("/edit")
-        for item in ['type','language']:
-            if not self._update_entity_if_not_set(update,work,'work',item, inarray=True):
+        for item in ['type', 'language']:
+            if not self._update_entity_if_not_set(update, work, 'work', item, inarray=True):
                 return
-        if not self._update_entity_if_not_set(update,work,'work','comment','',utf8ize=True):
+        if not self._update_entity_if_not_set(update, work, 'work', 'comment', '', utf8ize=True):
             return
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-work.',auto,edit_note)
+        return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-work.', auto, edit_note)
 
     def edit_relationship(self, rel_id, entity0_type, entity1_type, old_link_type_id, new_link_type_id, attributes, begin_date, end_date, edit_note, auto=False):
         self.b.open(self.url("/edit/relationship/edit", id=str(rel_id), type0=entity0_type, type1=entity1_type))
@@ -310,7 +312,7 @@ class MusicBrainzClient(object):
             self.b["ar.period.begin_date."+k] = str(v)
         for k, v in end_date.items():
             self.b["ar.period.end_date."+k] = str(v)
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.',auto,edit_note, "exists with these attributes")
+        return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.', auto, edit_note, "exists with these attributes")
 
     def remove_relationship(self, rel_id, entity0_type, entity1_type, edit_note):
         self.b.open(self.url("/edit/relationship/delete", id=str(rel_id), type0=entity0_type, type1=entity1_type))
@@ -385,7 +387,7 @@ class MusicBrainzClient(object):
 
             if 'tracklist' in medium:
                 tracklist_id = self.b["mediums.%s.id" % medium_no]
-                request = urllib2.Request('http://musicbrainz.org/ws/js/medium/%s' % tracklist_id, headers={"Accept" : "application/json"})
+                request = urllib2.Request('http://musicbrainz.org/ws/js/medium/%s' % tracklist_id, headers={"Accept": "application/json"})
                 data = urllib2.urlopen(request)
                 old_tracklist = json.load(data)
 
@@ -398,7 +400,7 @@ class MusicBrainzClient(object):
                         'length': new_track['length'] if 'length' in new_track else old_track['length'],
                         'artist_credit': new_track['artist_credit'] if 'artist_credit' in new_track else old_track['artist_credit']
                     }
-                    to['edit_sha1'] = base64.b64encode( hashlib.sha1(structureToString(to)).digest() )
+                    to['edit_sha1'] = base64.b64encode(hashlib.sha1(structureToString(to)).digest())
                     to['position'] = trackno
                     to['deleted'] = 0
                     to['number'] = new_track['number'] if 'number' in new_track else old_track['number']
@@ -421,14 +423,14 @@ class MusicBrainzClient(object):
             raise Exception('unable to post edit')
 
     def set_release_script(self, entity_id, old_script_id, new_script_id, edit_note, auto=False):
-        return self._edit_release_information(entity_id, {"script_id": [[str(old_script_id)],[str(new_script_id)]]}, edit_note, auto)
+        return self._edit_release_information(entity_id, {"script_id": [[str(old_script_id)], [str(new_script_id)]]}, edit_note, auto)
 
     def set_release_language(self, entity_id, old_language_id, new_language_id, edit_note, auto=False):
-        return self._edit_release_information(entity_id, {"language_id": [[str(old_language_id)],[str(new_language_id)]]}, edit_note, auto)
+        return self._edit_release_information(entity_id, {"language_id": [[str(old_language_id)], [str(new_language_id)]]}, edit_note, auto)
 
     def set_release_packaging(self, entity_id, old_packaging_id, new_packaging_id, edit_note, auto=False):
         old_packaging = [str(old_packaging_id)] if old_packaging_id is not None else None
-        return self._edit_release_information(entity_id, {"packaging_id": [old_packaging ,[str(new_packaging_id)]]}, edit_note, auto)
+        return self._edit_release_information(entity_id, {"packaging_id": [old_packaging, [str(new_packaging_id)]]}, edit_note, auto)
 
     def set_release_medium_format(self, entity_id, medium_number, old_format_id, new_format_id, edit_note, auto=False):
         self.b.open(self.url("/release/%s/edit" % (entity_id,)))
@@ -502,7 +504,7 @@ class MusicBrainzClient(object):
         image_is_remote = True if image.startswith(('http://', 'https://', 'ftp://')) else False
         if image_is_remote:
             u = urllib2.urlopen(image)
-            f,ext = os.path.splitext(image)
+            f, ext = os.path.splitext(image)
             localFile = '%s/%s%s' % (cfg.TMP_DIR, ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8)), ext)
             tmpfile = open(localFile, 'w')
             tmpfile.write(u.read())
@@ -526,7 +528,7 @@ class MusicBrainzClient(object):
         cover_art_id = int((time.time()-1327528905)*100)
 
         # Step 1: Request POST fields for CAA from http://musicbrainz.org/ws/js/cover-art-upload
-        request = urllib2.Request('http://musicbrainz.org/ws/js/cover-art-upload/%s?image_id=%s&mime_type=%s&redirect=true' % (release_gid, cover_art_id, mime_type), headers={"Accept" : "application/json"})
+        request = urllib2.Request('http://musicbrainz.org/ws/js/cover-art-upload/%s?image_id=%s&mime_type=%s&redirect=true' % (release_gid, cover_art_id, mime_type), headers={"Accept": "application/json"})
         data = urllib2.urlopen(request)
         postfields = json.load(data)['formdata']
 
@@ -561,8 +563,10 @@ class MusicBrainzClient(object):
         # http://stackoverflow.com/questions/9249996/mechanize-cannot-read-form-with-submitcontrol-that-is-disabled-and-has-no-value
         self._select_form("add-cover-art")
         self.b.set_all_readonly(False)
-        try: self.b['add-cover-art.as_auto_editor'] = 1 if auto else 0
-        except mechanize._form.ControlNotFoundError: pass
+        try:
+            self.b['add-cover-art.as_auto_editor'] = 1 if auto else 0
+        except mechanize._form.ControlNotFoundError:
+            pass
         submitted_types = []
         types_control = self.b.find_control(name='add-cover-art.type_id')
         for type in types:

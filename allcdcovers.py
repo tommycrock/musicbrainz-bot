@@ -157,12 +157,12 @@ def fetch_covers(base_url):
 
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
-    suffixes = [('',2**10), ('k',2**20), ('M',2**30), ('G',2**40), ('T',2**50)]
+    suffixes = [('', 2**10), ('k', 2**20), ('M', 2**30), ('G', 2**40), ('T', 2**50)]
     for suf, lim in suffixes:
         if size > lim:
             continue
         else:
-            return "%s %sB" % (round(size/float(lim/2**10),1), suf)
+            return "%s %sB" % (round(size/float(lim/2**10), 1), suf)
 
 if zbar:
     symtypes = (zbar.Symbol.EAN13,  zbar.Symbol.EAN8, zbar.Symbol.ISBN10,
@@ -226,7 +226,7 @@ ordering = {
 }
 def cov_order(cov):
     typ = cov['type']
-    return ordering[typ.split('_',1)[0]], typ
+    return ordering[typ.split('_', 1)[0]], typ
 
 COMMENT = ""
 def upload_covers(covers, mbid):

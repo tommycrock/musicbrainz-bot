@@ -51,12 +51,12 @@ def done(line):
 
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
-    suffixes = [('',2**10), ('k',2**20), ('M',2**30), ('G',2**40), ('T',2**50)]
+    suffixes = [('', 2**10), ('k', 2**20), ('M', 2**30), ('G', 2**40), ('T', 2**50)]
     for suf, lim in suffixes:
         if size > lim:
             continue
         else:
-            return "%s %sB" % (round(size/float(lim/2**10),1), suf)
+            return "%s %sB" % (round(size/float(lim/2**10), 1), suf)
 
 symtypes = (zbar.Symbol.EAN13,  zbar.Symbol.EAN8, zbar.Symbol.ISBN10,
             zbar.Symbol.ISBN13, zbar.Symbol.UPCA, zbar.Symbol.UPCE,
@@ -192,7 +192,7 @@ def handle_release(release):
                 sym['url'] = url
                 sym['art_type'] = art_type_map[art_type]
                 sym['qualname'] = qual2name(sym['quality'])
-                note += ("Recognized '''%(type)s:''' %(data)s from %(art_type)s cover image %(url)s\n"+
+                note += ("Recognized '''%(type)s:''' %(data)s from %(art_type)s cover image %(url)s\n" +
                          "'''Confidence:''' %(qualname)s %(quality)d [scale %(scale)s]\n") % sym
 
     if not txn_ids:
@@ -244,7 +244,7 @@ def bot_main():
     init_db()
     cur = db.cursor(cursor_factory=NamedTupleCursor)
 
-    skip_ids = [line.split(' ',2)[1] for line in state if ' ' in line]
+    skip_ids = [line.split(' ', 2)[1] for line in state if ' ' in line]
     # Format as PostgreSQL array literal
     skip_ids = '{%s}' % ','.join(skip_ids)
 
