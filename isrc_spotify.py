@@ -87,7 +87,7 @@ def compare_data(mb_release, sp_release):
     track_sim = []
     for i in range(len(mb_release['tracks'])):
         track.append(similarity(mb_release['tracks'][i]['name'], sp_release['tracks'][i]['name']))
-        track_time_diff.append(abs(mb_release['tracks'][i]['length'] - sp_release['tracks'][i]['length']*1000)/1000)
+        track_time_diff.append(abs(mb_release['tracks'][i]['length'] - sp_release['tracks'][i]['length'] * 1000) / 1000)
         if track_time_diff[i] > 15:
             track_time_sim = 0
         else:
@@ -126,7 +126,7 @@ def make_html_comparison_page(mbrainz, spotify):
         for track in spotify['tracks']:
             f.write('<div>%s-%s: %s (%s)</div>' %
                     (track['disc-number'], track['track-number'],
-                     track['name'], int(track['length']*1000)))
+                     track['name'], int(track['length'] * 1000)))
         f.write('</div></body></html>')
 
 

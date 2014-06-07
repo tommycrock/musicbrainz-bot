@@ -223,12 +223,12 @@ def durationToMS(string):
     m = _re_duration.match(string)
     if not m:
         return None
-    return (int(m.group(1))*60 + int(m.group(2)))*1000
+    return (int(m.group(1)) * 60 + int(m.group(2))) * 1000
 
 
 def msToDuration(length):
-    minutes = int(length/1000/60) % 60
-    seconds = int(length/1000) % 60
+    minutes = int(length / 1000 / 60) % 60
+    seconds = int(length / 1000) % 60
     return "%02d:%02d" % (minutes, seconds)
 
 

@@ -53,12 +53,12 @@ def done(line):
 
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
-    suffixes = [('', 2**10), ('k', 2**20), ('M', 2**30), ('G', 2**40), ('T', 2**50)]
+    suffixes = [('', 2 ** 10), ('k', 2 ** 20), ('M', 2 ** 30), ('G', 2 ** 40), ('T', 2 ** 50)]
     for suf, lim in suffixes:
         if size > lim:
             continue
         else:
-            return "%s %sB" % (round(size/float(lim/2**10), 1), suf)
+            return "%s %sB" % (round(size / float(lim / 2 ** 10), 1), suf)
 
 symtypes = (zbar.Symbol.EAN13,  zbar.Symbol.EAN8, zbar.Symbol.ISBN10,
             zbar.Symbol.ISBN13, zbar.Symbol.UPCA, zbar.Symbol.UPCE,

@@ -100,7 +100,7 @@ def main(verbose=False):
         scripts = get_scripts(track_names + medium_names + release_name)
         scripts_sorted = sorted(scripts.iteritems(), key=operator.itemgetter(1), reverse=True)
         stats[', '.join(scripts)] += 1
-        if (len(scripts) == 1 or (len(scripts) == 2 and 'Zyyy' in scripts)) and float(scripts_sorted[0][1])/sum(scripts.values()) > 0.40:
+        if (len(scripts) == 1 or (len(scripts) == 2 and 'Zyyy' in scripts)) and float(scripts_sorted[0][1]) / sum(scripts.values()) > 0.40:
             script = scripts_sorted[0][0]
             #if script == 'Latn':
             #    continue
@@ -120,7 +120,7 @@ def main(verbose=False):
 
     for i, (gid, old_script_id, new_script, script_stats) in enumerate(r_flat):
         if verbose:
-            out('%d/%d - %.2f%%' % (i+1, count, (i+1) * 100.0 / count))
+            out('%d/%d - %.2f%%' % (i + 1, count, (i + 1) * 100.0 / count))
         out('http://musicbrainz.org/release/%s %s -> %s' % (gid, mb_to_iso15924[old_script_id] if old_script_id else '', new_script))
         new_script_name = iso15924_to_mb[new_script]['name']
         new_script_id = iso15924_to_mb[new_script]['id']

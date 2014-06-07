@@ -137,7 +137,7 @@ def main(verbose=False):
             continue
         urls = set(url for url, in db.execute(query_rg_release_discogs, rg))
         if verbose:
-            out(u'%d/%d - %.2f%%' % (i+1, count, (i+1) * 100.0 / count))
+            out(u'%d/%d - %.2f%%' % (i + 1, count, (i + 1) * 100.0 / count))
             out(u'%s http://musicbrainz.org/release-group/%s' % (name, gid))
         try:
             masters = list(discogs_get_master(urls))

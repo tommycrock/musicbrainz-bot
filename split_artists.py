@@ -174,7 +174,7 @@ def find_credit_matches(cred, comment):
 def handle_credit(src):
     cur = db.cursor(cursor_factory=NamedTupleCursor)
 
-    other_refs = src.ref_count-(src.r_count+src.t_count)
+    other_refs = src.ref_count - (src.r_count + src.t_count)
     print "%s (%d rec, %d tracks, %d other refs): %s/artist/%s/aliases" % (
             src.name, src.r_count, src.t_count, other_refs, config.MB_SITE, src.gid)
 
@@ -192,7 +192,7 @@ def handle_credit(src):
         return False
 
     # Make sure an edit wasn't already submitted.
-    cur.execute("SELECT EXISTS(SELECT * FROM "+config.BOT_SCHEMA_DB+".split_artists_history" +
+    cur.execute("SELECT EXISTS(SELECT * FROM " + config.BOT_SCHEMA_DB + ".split_artists_history" +
                 " WHERE credit=%s AND changed=true)",
                 [src.c_id])
 
@@ -218,7 +218,7 @@ def handle_credit(src):
             WHERE a.id=%s AND ac.id != %s -- Exclude credit currently being edited
               AND not exists(
                     -- Also exclude credits already edited before
-                    SELECT * FROM """+config.BOT_SCHEMA_DB+""".split_artists_history sah
+                    SELECT * FROM """ + config.BOT_SCHEMA_DB + """.split_artists_history sah
                     WHERE sah.credit=ac.id AND sah.changed=true)
             """, [src.a_id, src.c_id])
 
@@ -251,7 +251,7 @@ WHERE TRUE
   AND (%(filter)s IS NULL OR an.name ~ %(filter)s) -- PostgreSQL will optimize out if filter is NULL
   AND an.name ~ %(re)s
   AND not exists(
-      SELECT * FROM """+config.BOT_SCHEMA_DB+""".split_artists_history sah
+      SELECT * FROM """ + config.BOT_SCHEMA_DB + """.split_artists_history sah
       WHERE sah.credit=ac.id AND bot_version=%(ver)s
         AND sah.time > (now() - %(interval)s::interval))
   -- l_artist_artist is handled differently in Python code
@@ -285,7 +285,7 @@ def bot_main(filter=None):
         changed = handle_credit(cred)
         # None - user cancelled edit
         if changed is not None:
-            cur2.execute("INSERT INTO "+config.BOT_SCHEMA_DB+".split_artists_history" +
+            cur2.execute("INSERT INTO " + config.BOT_SCHEMA_DB + ".split_artists_history" +
                          " (artist, credit, changed, bot_version) VALUES (%s, %s, %s, %s)",
                         [cred.a_id, cred.c_id, changed, VERSION])
             db.commit()

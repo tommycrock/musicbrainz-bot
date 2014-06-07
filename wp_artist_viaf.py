@@ -42,11 +42,11 @@ WITH
     artists_wo_viaf AS (
         SELECT DISTINCT a.id AS artist_id, a.gid AS artist_gid, u.url AS wp_url
         FROM artist a
-            JOIN l_artist_url l ON l.entity0 = a.id AND l.link IN (SELECT id FROM link WHERE link_type = """+str(WIKIPEDIA_RELATIONSHIP_TYPES['artist'])+""")
+            JOIN l_artist_url l ON l.entity0 = a.id AND l.link IN (SELECT id FROM link WHERE link_type = """ + str(WIKIPEDIA_RELATIONSHIP_TYPES['artist']) + """)
             JOIN url u ON u.id = l.entity1 AND u.url LIKE 'http://%%.wikipedia.org/wiki/%%' AND substring(u.url from 8 for 2) IN ('en', 'fr')
         WHERE 
             /* No existing VIAF relationship */
-            NOT EXISTS (SELECT 1 FROM l_artist_url WHERE l_artist_url.entity0 = a.id AND l_artist_url.link IN (SELECT id FROM link WHERE link_type = """+str(VIAF_RELATIONSHIP_TYPES['artist'])+"""))
+            NOT EXISTS (SELECT 1 FROM l_artist_url WHERE l_artist_url.entity0 = a.id AND l_artist_url.link IN (SELECT id FROM link WHERE link_type = """ + str(VIAF_RELATIONSHIP_TYPES['artist']) + """))
             /* WP link should only be linked to this artist */
             AND NOT EXISTS (SELECT 1 FROM l_artist_url WHERE l_artist_url.entity1 = u.id AND l_artist_url.entity0 <> a.id)
             AND l.edits_pending = 0

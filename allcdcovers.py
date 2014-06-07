@@ -165,12 +165,12 @@ def fetch_covers(base_url):
 
 def pretty_size(size):
     # http://www.dzone.com/snippets/filesize-nice-units
-    suffixes = [('', 2**10), ('k', 2**20), ('M', 2**30), ('G', 2**40), ('T', 2**50)]
+    suffixes = [('', 2 ** 10), ('k', 2 ** 20), ('M', 2 ** 30), ('G', 2 ** 40), ('T', 2 ** 50)]
     for suf, lim in suffixes:
         if size > lim:
             continue
         else:
-            return "%s %sB" % (round(size/float(lim/2**10), 1), suf)
+            return "%s %sB" % (round(size / float(lim / 2 ** 10), 1), suf)
 
 if zbar:
     symtypes = (zbar.Symbol.EAN13,  zbar.Symbol.EAN8, zbar.Symbol.ISBN10,
@@ -265,7 +265,7 @@ def upload_covers(covers, mbid):
             if cov['dims']:
                 # Detect spines - jewel cases only
                 w, h = cov['dims']
-                aspect = float(w)/h
+                aspect = float(w) / h
                 if 1.21 <= aspect <= 1.35:
                     types.append('spine')
         else:  # ???

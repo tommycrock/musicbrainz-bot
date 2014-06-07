@@ -133,7 +133,7 @@ def unquote(s, safe=''):
 
 
 def musicbrainz_quote(s):
-    return unicode(urllib.quote(unquote(s.encode('utf-8'), MB_ENC_NEVER), MB_UNENCODE+MB_ENC_NEVER), 'utf-8')
+    return unicode(urllib.quote(unquote(s.encode('utf-8'), MB_ENC_NEVER), MB_UNENCODE + MB_ENC_NEVER), 'utf-8')
 
 
 def discogs_quote(name):
@@ -142,9 +142,9 @@ def discogs_quote(name):
 
 def combine_names(names):
     if len(names) > 1:
-        return u' and '.join([', '.join([u'“'+n+u'”' for n in names[:-1]]), u'“'+names[-1]+u'”'])
+        return u' and '.join([', '.join([u'“' + n + u'”' for n in names[:-1]]), u'“' + names[-1] + u'”'])
     else:
-        return u'“'+names[0]+u'”'
+        return u'“' + names[0] + u'”'
 
 
 def artist_credit(ac):
@@ -180,7 +180,7 @@ def main(verbose=False):
             db.execute("INSERT INTO bot_discogs_artist_problematic (gid) VALUES (%s)", a_gid)
             continue
         if verbose:
-            out(u'%d/%d - %.2f%%' % (i+1, count, (i+1) * 100.0 / count))
+            out(u'%d/%d - %.2f%%' % (i + 1, count, (i + 1) * 100.0 / count))
             out('http://musicbrainz.org/release/%s (%d-%d)' % (r_gid, m_pos, t_pos))
             out('%s' % url)
             out('http://musicbrainz.org/artist/%s' % a_gid)
