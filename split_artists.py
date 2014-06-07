@@ -51,7 +51,7 @@ def get_score(src, dest):
         JOIN link_type lt ON (lt.id=link_type)
         WHERE entity0=%s AND entity1=%s""", [dest.id, src.a_id])
     for link in cur:
-        if link.link_type != 102: # "collaborated on"
+        if link.link_type != 102:  # "collaborated on"
             # Wrong relationship type, can't handle that
             return -1, rels, comment
         score += 1

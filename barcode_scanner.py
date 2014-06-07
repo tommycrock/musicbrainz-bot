@@ -39,7 +39,7 @@ DBFILE = os.path.join(CAA_CACHE, 'barcode_scanner.db')
 try:
     statefile = open(DBFILE, 'r+')
     state = set(x.split('#', 1)[0].strip() for x in statefile.readlines())
-except IOError: # Not found? Try writing
+except IOError:  # Not found? Try writing
     statefile = open(DBFILE, 'w')
     state = set()
 

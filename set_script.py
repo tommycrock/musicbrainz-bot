@@ -67,18 +67,18 @@ def get_scripts(text):
 whitelisted_iso_codes = set([
     'Latn',
     'Cyrl',
-    'Grek', # Greek without Coptic
+    'Grek',  # Greek without Coptic
     'Hebr',
     'Arab',
     'Thai',
-    'Guru', # Gurmukhi, most used in Punjabi language, ~10 releases
-    'Deva', # Devanagari, used in India and Nepal, ~10 releases
-    'Armn', # Armenian, ~5 releases
-    'Sinh', # Sinhala, used in Sri Lanka, ~5 releases
-    'Beng', # Bengali, ~2 releases
-    'Geor', # Georgian, only Mkhedruli, not Asomtavruli, 1 release
-    'Dsrt', # Deseret, phonemic English spelling, mid-19th century, 1 release
-    'Cans', # Canadian Syllabics, used by Inuit, 1 release
+    'Guru',  # Gurmukhi, most used in Punjabi language, ~10 releases
+    'Deva',  # Devanagari, used in India and Nepal, ~10 releases
+    'Armn',  # Armenian, ~5 releases
+    'Sinh',  # Sinhala, used in Sri Lanka, ~5 releases
+    'Beng',  # Bengali, ~2 releases
+    'Geor',  # Georgian, only Mkhedruli, not Asomtavruli, 1 release
+    'Dsrt',  # Deseret, phonemic English spelling, mid-19th century, 1 release
+    'Cans',  # Canadian Syllabics, used by Inuit, 1 release
 ])
 
 stats = defaultdict(int)

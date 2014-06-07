@@ -59,7 +59,7 @@ DBFILE = os.path.join(ACC_CACHE, 'progress.db')
 try:
     statefile = open(DBFILE, 'r+')
     state = set(x.strip() for x in statefile.readlines())
-except IOError: # Not found? Try writing
+except IOError:  # Not found? Try writing
     create_parent_dir(DBFILE)
     statefile = open(DBFILE, 'w')
     state = set()
@@ -268,7 +268,7 @@ def upload_covers(covers, mbid):
                 aspect = float(w)/h
                 if 1.21 <= aspect <= 1.35:
                     types.append('spine')
-        else: # ???
+        else:  # ???
             types = []
 
         note = "\"%(title)s\" from AllCDCovers.com\nType: %(type)s / Size: %(size_pretty)s (%(size_bytes)s bytes)\n" % (cov)
@@ -323,7 +323,7 @@ def find_mbid_by_barcode(barcodes):
     if cur.rowcount == 0:
         print "No matches in MusicBrainz"
     else:
-        print # Empty line
+        print  # Empty line
         print "Found:"
 
     res = cur.fetchall()
@@ -406,8 +406,8 @@ def init_br():
     global br
 
     br = mechanize.Browser()
-    br.set_handle_robots(False) # no robots
-    br.set_handle_refresh(False) # can sometimes hang without this
+    br.set_handle_robots(False)  # no robots
+    br.set_handle_refresh(False)  # can sometimes hang without this
     br.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1')]
 
 

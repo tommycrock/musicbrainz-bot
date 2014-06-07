@@ -395,7 +395,7 @@ class MusicBrainzClient(object):
 
                 edited_tracklist = []
                 for trackno, old_track in enumerate(old_tracklist['tracks']):
-                    new_track = medium['tracklist'][trackno]# if medium['tracklist'][trackno] is not None else {}
+                    new_track = medium['tracklist'][trackno]  # if medium['tracklist'][trackno] is not None else {}
                     name = new_track['name'] if 'name' in new_track else old_track['name']
                     to = {
                         'name': name,
