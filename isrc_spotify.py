@@ -72,8 +72,10 @@ engine = sqlalchemy.create_engine(cfg.MB_DB)
 db = engine.connect()
 db.execute("SET search_path TO musicbrainz, %s" % cfg.BOT_SCHEMA_DB)
 
+
 def similarity(a, b):
     return int(similarity2(to_unicode(a), to_unicode(b)) * 100)
+
 
 def compare_data(mb_release, sp_release):
     name = similarity(mb_release['name'], sp_release['name'])
@@ -85,13 +87,14 @@ def compare_data(mb_release, sp_release):
     track_sim = []
     for i in range(len(mb_release['tracks'])):
         track.append(similarity(mb_release['tracks'][i]['name'], sp_release['tracks'][i]['name']))
-        track_time_diff.append(abs(mb_release['tracks'][i]['length'] - sp_release['tracks'][i]['length']*1000)/1000)
+        track_time_diff.append(abs(mb_release['tracks'][i]['length'] - sp_release['tracks'][i]['length'] * 1000) / 1000)
         if track_time_diff[i] > 15:
             track_time_sim = 0
         else:
             track_time_sim = int((15 - track_time_diff[i]) / 15 * 100)
         track_sim.append(int(track[i] * 0.50) + int(track_time_sim * 0.50))
     return int(name * 0.10) + int(artist * 0.10) + int(sum(track_sim) / len(mb_release['tracks']) * 0.80)
+
 
 def submit_isrcs(mb_release, sp_release):
     mbids = []
@@ -105,6 +108,7 @@ def submit_isrcs(mb_release, sp_release):
                 this_isrc.append(extid['id'].upper())
         isrcs.append(this_isrc)
     musicbrainzngs.submit_isrcs(dict(zip(mbids, isrcs)))
+
 
 def make_html_comparison_page(mbrainz, spotify):
     with codecs.open('compare.html', mode='w', encoding='utf-8') as f:
@@ -122,8 +126,9 @@ def make_html_comparison_page(mbrainz, spotify):
         for track in spotify['tracks']:
             f.write('<div>%s-%s: %s (%s)</div>' %
                     (track['disc-number'], track['track-number'],
-                     track['name'], int(track['length']*1000)))
+                     track['name'], int(track['length'] * 1000)))
         f.write('</div></body></html>')
+
 
 def save_processing(mb_release):
     if mb_release['processed'] is None:

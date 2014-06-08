@@ -50,6 +50,8 @@ WHERE r.id = %s
 
 utils.parse_scripts()
 script_range_to_iso_code = sorted((range, iso15924.unicode_alias_to_iso_code[script]) for script, ranges in utils.script_ranges.items() for range in ranges)
+
+
 def get_scripts(text):
     d = defaultdict(int)
     for u in text:
@@ -65,18 +67,18 @@ def get_scripts(text):
 whitelisted_iso_codes = set([
     'Latn',
     'Cyrl',
-    'Grek', # Greek without Coptic
+    'Grek',  # Greek without Coptic
     'Hebr',
     'Arab',
     'Thai',
-    'Guru', # Gurmukhi, most used in Punjabi language, ~10 releases
-    'Deva', # Devanagari, used in India and Nepal, ~10 releases
-    'Armn', # Armenian, ~5 releases
-    'Sinh', # Sinhala, used in Sri Lanka, ~5 releases
-    'Beng', # Bengali, ~2 releases
-    'Geor', # Georgian, only Mkhedruli, not Asomtavruli, 1 release
-    'Dsrt', # Deseret, phonemic English spelling, mid-19th century, 1 release
-    'Cans', # Canadian Syllabics, used by Inuit, 1 release
+    'Guru',  # Gurmukhi, most used in Punjabi language, ~10 releases
+    'Deva',  # Devanagari, used in India and Nepal, ~10 releases
+    'Armn',  # Armenian, ~5 releases
+    'Sinh',  # Sinhala, used in Sri Lanka, ~5 releases
+    'Beng',  # Bengali, ~2 releases
+    'Geor',  # Georgian, only Mkhedruli, not Asomtavruli, 1 release
+    'Dsrt',  # Deseret, phonemic English spelling, mid-19th century, 1 release
+    'Cans',  # Canadian Syllabics, used by Inuit, 1 release
 ])
 
 stats = defaultdict(int)
@@ -84,6 +86,7 @@ stats = defaultdict(int)
 query_scripts = '''SELECT DISTINCT id, iso_code, name FROM script'''
 iso15924_to_mb = dict((iso_code, {'id': script_id, 'name': name}) for (script_id, iso_code, name) in db.execute(query_scripts))
 mb_to_iso15924 = dict((v['id'], k) for k, v in iso15924_to_mb.items())
+
 
 def main(verbose=False):
     r_by_ac = defaultdict(list)
@@ -97,7 +100,7 @@ def main(verbose=False):
         scripts = get_scripts(track_names + medium_names + release_name)
         scripts_sorted = sorted(scripts.iteritems(), key=operator.itemgetter(1), reverse=True)
         stats[', '.join(scripts)] += 1
-        if (len(scripts) == 1 or (len(scripts) == 2 and 'Zyyy' in scripts)) and float(scripts_sorted[0][1])/sum(scripts.values()) > 0.40:
+        if (len(scripts) == 1 or (len(scripts) == 2 and 'Zyyy' in scripts)) and float(scripts_sorted[0][1]) / sum(scripts.values()) > 0.40:
             script = scripts_sorted[0][0]
             #if script == 'Latn':
             #    continue
@@ -117,7 +120,7 @@ def main(verbose=False):
 
     for i, (gid, old_script_id, new_script, script_stats) in enumerate(r_flat):
         if verbose:
-            out('%d/%d - %.2f%%' % (i+1, count, (i+1) * 100.0 / count))
+            out('%d/%d - %.2f%%' % (i + 1, count, (i + 1) * 100.0 / count))
         out('http://musicbrainz.org/release/%s %s -> %s' % (gid, mb_to_iso15924[old_script_id] if old_script_id else '', new_script))
         new_script_name = iso15924_to_mb[new_script]['name']
         new_script_id = iso15924_to_mb[new_script]['id']

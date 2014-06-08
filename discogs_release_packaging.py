@@ -51,6 +51,7 @@ ORDER BY b.processed NULLS FIRST, r.artist_credit, r.id
 LIMIT 5000
 """
 
+
 def discogs_get_release_packaging(discogs_release):
     #if len(discogs_release.data['formats']) > 1:
     #    return None

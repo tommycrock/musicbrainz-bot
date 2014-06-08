@@ -15,6 +15,7 @@ from utils import structureToString
 from datetime import datetime
 from mbbot.guesscase import guess_artist_sort_name
 
+
 def test_plain_jpeg(h, f):
     """Without this, imghdr only recognizes images with JFIF/Exif header. http://bugs.python.org/issue16512"""
     if h.startswith('\xff\xd8'):
@@ -118,7 +119,7 @@ class MusicBrainzClient(object):
         return max_edits - int(re.sub(r'[^0-9]+', '', m.group(1)))
 
     def _extract_mbid(self, entity_type):
-        m = re.search(r'/'+entity_type+r'/([0-9a-f-]{36})$', self.b.geturl())
+        m = re.search(r'/' + entity_type + r'/([0-9a-f-]{36})$', self.b.geturl())
         if m is None:
             raise Exception('unable to post edit')
         return m.group(1)
@@ -146,7 +147,7 @@ class MusicBrainzClient(object):
 
     def _as_auto_editor(self, prefix, auto):
         try:
-            self.b[prefix+"as_auto_editor"] = ["1"] if auto else []
+            self.b[prefix + "as_auto_editor"] = ["1"] if auto else []
         except mechanize.ControlNotFoundError:
             pass
 
@@ -158,8 +159,9 @@ class MusicBrainzClient(object):
             else:
                 return False
         return True
+
     def _edit_note_and_auto_editor_and_submit_and_check_response(self, prefix, auto, edit_note, already_done_msg='default'):
-        self.b[prefix+"edit_note"] = edit_note.encode('utf8')
+        self.b[prefix + "edit_note"] = edit_note.encode('utf8')
         self._as_auto_editor(prefix, auto)
         self.b.submit()
         if already_done_msg != 'default':
@@ -172,7 +174,7 @@ class MusicBrainzClient(object):
              "rel-editor.rels.0.link_type": link_type,
              "rel-editor.edit_note": edit_note,
              "rel-editor.as_auto_editor": auto and 1 or 0}
-        dta.update(("rel-editor.rels.0.entity."+`x`+"."+k, v) for x in xrange(2) for (k, v) in [entity0, entity1][x].iteritems())
+        dta.update(("rel-editor.rels.0.entity." + `x`+"." + k, v) for x in xrange(2) for (k, v) in [entity0, entity1][x].iteritems())
         print dta
         try:
             self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
@@ -198,9 +200,9 @@ class MusicBrainzClient(object):
 
     def _update_entity_if_not_set(self, update, entity_dict, entity_type, item, suffix="_id", utf8ize=False, inarray=False):
         if item in update:
-            key = "edit-"+entity_type+"."+item+suffix
+            key = "edit-" + entity_type + "." + item + suffix
             if self.b[key] != (inarray and [''] or ''):
-                print " * "+item+" already set, not changing"
+                print " * " + item + " already set, not changing"
                 return False
             val = (
                 utf8ize and entity_dict[item].encode('utf-8') or str(entity_dict[item]))
@@ -208,17 +210,17 @@ class MusicBrainzClient(object):
         return True
 
     def _update_artist_date_if_not_set(self, update, artist, item_prefix):
-        item = item_prefix+'_date'
+        item = item_prefix + '_date'
         if item in update:
-            prefix = "edit-artist.period."+item
-            if self.b[prefix+".year"]:
-                print " * "+item.replace('_', ' ')+" year already set, not changing"
+            prefix = "edit-artist.period." + item
+            if self.b[prefix + ".year"]:
+                print " * " + item.replace('_', ' ') + " year already set, not changing"
                 return False
-            self.b[prefix+".year"] = str(artist[item+'_year'])
-            if artist[item+'_month']:
-                self.b[prefix+".month"] = str(artist[item+'_month'])
-                if artist[item+'_day']:
-                    self.b[prefix+".day"] = str(artist[item+'_day'])
+            self.b[prefix + ".year"] = str(artist[item + '_year'])
+            if artist[item + '_month']:
+                self.b[prefix + ".month"] = str(artist[item + '_month'])
+                if artist[item + '_day']:
+                    self.b[prefix + ".day"] = str(artist[item + '_day'])
         return True
 
     def edit_artist(self, artist, update, edit_note, auto=False):
@@ -238,7 +240,7 @@ class MusicBrainzClient(object):
         return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-artist.', auto, edit_note)
 
     def edit_artist_credit(self, entity_id, credit_id, ids, names, join_phrases, edit_note):
-        assert len(ids) == len(names) == len(join_phrases)+1
+        assert len(ids) == len(names) == len(join_phrases) + 1
         join_phrases.append('')
 
         self.b.open(self.url("/artist/%s/credit/%d/edit" % (entity_id, int(credit_id))))
@@ -307,11 +309,11 @@ class MusicBrainzClient(object):
             return
         self.b["ar.link_type_id"] = [str(new_link_type_id)]
         for k, v in attributes.items():
-            self.b["ar.attrs."+k] = v
+            self.b["ar.attrs." + k] = v
         for k, v in begin_date.items():
-            self.b["ar.period.begin_date."+k] = str(v)
+            self.b["ar.period.begin_date." + k] = str(v)
         for k, v in end_date.items():
-            self.b["ar.period.end_date."+k] = str(v)
+            self.b["ar.period.end_date." + k] = str(v)
         return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.', auto, edit_note, "exists with these attributes")
 
     def remove_relationship(self, rel_id, entity0_type, entity1_type, edit_note):
@@ -393,7 +395,7 @@ class MusicBrainzClient(object):
 
                 edited_tracklist = []
                 for trackno, old_track in enumerate(old_tracklist['tracks']):
-                    new_track = medium['tracklist'][trackno]# if medium['tracklist'][trackno] is not None else {}
+                    new_track = medium['tracklist'][trackno]  # if medium['tracklist'][trackno] is not None else {}
                     name = new_track['name'] if 'name' in new_track else old_track['name']
                     to = {
                         'name': name,
@@ -441,7 +443,7 @@ class MusicBrainzClient(object):
 
         self._select_form("/edit")
         attributes = {
-            "mediums.%s.format_id" % (medium_number-1): [[str(old_format_id) if old_format_id is not None else ''], [str(new_format_id)]]
+            "mediums.%s.format_id" % (medium_number - 1): [[str(old_format_id) if old_format_id is not None else ''], [str(new_format_id)]]
         }
         changed = False
         for k, v in attributes.items():
@@ -483,7 +485,7 @@ class MusicBrainzClient(object):
         self.b.open(self.url("/user/%s/edits" % (self.username,)))
         page = self.b.response().read()
         self._select_form("/edit")
-        edits = re.findall(r'<h2><a href="'+self.server+r'/edit/([0-9]+).*?<div class="edit-details">(.*?)</div>', page, re.S)
+        edits = re.findall(r'<h2><a href="' + self.server + r'/edit/([0-9]+).*?<div class="edit-details">(.*?)</div>', page, re.S)
         for i, (edit_nr, text) in enumerate(edits):
             if identify(edit_nr, text):
                 self.b['enter-vote.vote.%d.edit_note' % i] = edit_note.encode('utf8')
@@ -525,7 +527,7 @@ class MusicBrainzClient(object):
         page = self.b.response().read()
 
         # Generate a new cover art id, as done by mbserver
-        cover_art_id = int((time.time()-1327528905)*100)
+        cover_art_id = int((time.time() - 1327528905) * 100)
 
         # Step 1: Request POST fields for CAA from http://musicbrainz.org/ws/js/cover-art-upload
         request = urllib2.Request('http://musicbrainz.org/ws/js/cover-art-upload/%s?image_id=%s&mime_type=%s&redirect=true' % (release_gid, cover_art_id, mime_type), headers={"Accept": "application/json"})

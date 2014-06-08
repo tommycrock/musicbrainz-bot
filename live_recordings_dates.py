@@ -52,5 +52,5 @@ for recording in db.execute(query):
     edit_note = 'Setting relationship dates from recording comment: "%s"' % recording['comment']
     colored_out(bcolors.NONE, " * new date:", date)
     
-    time.sleep(15) 
+    time.sleep(15)
     mb.edit_relationship(recording['rel_id'], 'recording', 'work', recording['link_type'], recording['link_type'], attributes, date, date, edit_note, True)

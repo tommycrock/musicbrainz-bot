@@ -113,6 +113,8 @@ ORDER BY r.artist_credit
 '''
 
 # from https://github.com/metabrainz/musicbrainz-server/blob/master/root/static/scripts/edit/MB/Control/URLCleanup.js
+
+
 def amazon_url_asin(url):
     m = re.search(r'(?:/|\ba=)([A-Z0-9]{10})(?:[/?&%#]|$)', url)
     return m.group(1) if m else None
@@ -126,6 +128,7 @@ asins = set(amazon_url_asin(url) for url, in db.execute("""SELECT url.url FROM u
 barcodes_hist = defaultdict(int)
 for barcode, in db.execute("""SELECT DISTINCT barcode FROM release WHERE barcode IS NOT NULL AND barcode != ''"""):
     barcodes_hist[barcode.lstrip('0')] += 1
+
 
 def asciipunct(s):
     mapping = {
@@ -151,10 +154,12 @@ def asciipunct(s):
         s = s.replace(orig, repl)
     return s
 
+
 def are_similar(name1, name2):
     name1, name2 = (asciipunct(s.strip().lower()) for s in (name1, name2))
     ratio = Levenshtein.jaro_winkler(name1, name2)
     return ratio >= 0.8 or name1 in name2 or name2 in name1
+
 
 def barcode_type(s):
     if len(s) == 8 or len(s) == 13:
@@ -162,6 +167,7 @@ def barcode_type(s):
     elif len(s) == 12:
         return 'UPC'
     return None
+
 
 def amazon_url_tld(url):
     m = re.search(r'amazon\.([a-z\.]+)/', url)
@@ -174,11 +180,13 @@ def amazon_url_tld(url):
         return tld
     return None
 
+
 def amazon_url_cleanup(url, asin):
     tld = amazon_url_tld(url)
     if tld:
         return 'http://www.amazon.%s/gp/product/%s' % (tld, asin)
     return None
+
 
 def gen_item_date_sort_key(date):
     def item_date_sort_key(item):
@@ -189,6 +197,7 @@ def gen_item_date_sort_key(date):
             amazon_date = datetime.datetime(1, 1, 1)
         return (abs(date - amazon_date), item)
     return item_date_sort_key
+
 
 def amazon_get_asin(barcode, country, date):
     params = {
@@ -221,6 +230,7 @@ def amazon_get_asin(barcode, country, date):
     items.sort(key=gen_item_date_sort_key(date))
     return items[0] if items else None
 
+
 def release_format(r):
     hist = defaultdict(int)
     text = []
@@ -234,6 +244,7 @@ def release_format(r):
     text.append(u'%d × %s' % (hist[last], last))
     return u', '.join(text)
 
+
 def date_format(year, month, day):
     if day:
         return u'%04d-%02d-%02d' % (year, month, day)
@@ -241,14 +252,18 @@ def date_format(year, month, day):
         return u'%04d-%02d' % (year, month)
     return u'%04d' % year
 
+
 def release_labels(r):
     return [name for name, in db.execute('''SELECT ln.name FROM release_label rl JOIN label l ON rl.label = l.id JOIN label_name ln ON l.name = ln.id WHERE rl.release = %s''', r)]
+
 
 def release_catnrs(r):
     return [cat for cat, in db.execute('''SELECT catalog_number FROM release_label WHERE release = %s''', r) if cat]
 
+
 def artist_countries(r):
     return [country for country, in db.execute('''SELECT DISTINCT c.iso_code FROM release r JOIN artist_credit_name AS acn ON acn.artist_credit = r.artist_credit JOIN artist AS artist ON artist.id = acn.artist JOIN country c ON c.id = artist.country WHERE r.id = %s''', r) if country]
+
 
 def cat_normalize(cat, country):
     if country == 'JP':
@@ -264,10 +279,12 @@ def cat_normalize(cat, country):
     else:
         return re.sub(r'[ -]+', r'', cat).upper()
 
+
 def cat_compare(a, b, country):
     a = cat_normalize(a, country)
     b = cat_normalize(b, country)
     return a and b and a == b
+
 
 def main(verbose=False):
     edits_left = mb.edits_left()
@@ -289,7 +306,7 @@ def main(verbose=False):
             db.execute("INSERT INTO bot_asin_problematic (gid) VALUES (%s)", gid)
             continue
         if verbose:
-            colored_out(bcolors.OKBLUE, u'%d/%d - %.2f%% - %s http://musicbrainz.org/release/%s %s %s' % (i+1, count, (i+1) * 100.0 / count, name, gid, barcode, country))
+            colored_out(bcolors.OKBLUE, u'%d/%d - %.2f%% - %s http://musicbrainz.org/release/%s %s %s' % (i + 1, count, (i + 1) * 100.0 / count, name, gid, barcode, country))
         try:
             mb_date = datetime.datetime(year if year else 1, month if month else 1, day if day else 1)
             item = amazon_get_asin(barcode, country, mb_date)

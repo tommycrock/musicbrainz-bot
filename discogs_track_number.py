@@ -61,6 +61,7 @@ WHERE m.release = %s
 ORDER by m.position, t.position
 """
 
+
 def are_similar(name1, name2):
     name1, name2 = (mangle_name(s) for s in (name1, name2))
     ratio = Levenshtein.jaro_winkler(name1, name2)
@@ -68,6 +69,7 @@ def are_similar(name1, name2):
     if ratio < 0.8:
         print " * ratio = %s => name1 = '%s' vs name2 = '%s'" % (ratio, name1, name2)
     return ratio >= 0.8
+
 
 def discogs_get_tracklist(release_url):
     m = re.match(r'http://www.discogs.com/release/([0-9]+)', release_url)
@@ -83,7 +85,7 @@ for release in db.execute(query):
     discogs_tracks = discogs_get_tracklist(release['discogs_url'])
     if (len(discogs_tracks) != release['track_count']):
         colored_out(bcolors.HEADER, ' * number of tracks mismatches (Discogs: %s vs MB: %s)' % (len(discogs_tracks), release['track_count']))
-    else:    
+    else:
         changed = False
         new_mediums = []
         position = 0
@@ -93,7 +95,7 @@ for release in db.execute(query):
                 new_mediums.append({'tracklist': []})
             new_mediums[-1]['tracklist'].append(new_track)
 
-            discogs_track = discogs_tracks[position]        
+            discogs_track = discogs_tracks[position]
             if not are_similar(discogs_track['title'], mb_track['name']):
                 colored_out(bcolors.FAIL, ' * track #%s not similar enough' % discogs_track['position'])
                 changed = False

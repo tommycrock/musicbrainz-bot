@@ -23,7 +23,7 @@ wp_lang = sys.argv[1] if len(sys.argv) > 1 else 'en'
 wp = MediaWiki('http://%s.wikipedia.org/w/api.php' % wp_lang)
 
 suffix = '_' + wp_lang if wp_lang != 'en' else ''
-wps = solr.SolrConnection('http://localhost:8983/solr/wikipedia'+suffix)
+wps = solr.SolrConnection('http://localhost:8983/solr/wikipedia' + suffix)
 
 mb = MusicBrainzClient(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
 
@@ -67,7 +67,7 @@ WITH
         LEFT JOIN iso_3166_1 iso ON iso.area = area.id
         LEFT JOIN (SELECT l.entity0 AS id
             FROM l_artist_url l
-            JOIN url u ON l.entity1 = u.id AND u.url LIKE 'http://"""+wp_lang+""".wikipedia.org/wiki/%%'
+            JOIN url u ON l.entity1 = u.id AND u.url LIKE 'http://""" + wp_lang + """.wikipedia.org/wiki/%%'
             WHERE l.link IN (SELECT id FROM link WHERE link_type = 179)
         ) wpl ON wpl.id = a.id
         WHERE a.id > 2 AND wpl.id IS NULL

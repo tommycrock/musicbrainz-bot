@@ -29,21 +29,26 @@ CREATE TABLE bot_isrc_zeroinch_problematic (
 );
 '''
 
+
 class MusicBrainzWebservice(object):
     def __init__(self, username, password, server='http://musicbrainz.org'):
         self.user_agent = 'zeroinch-bot/1.0 ( %s/user/%s )' % (server, username)
         self.ws = WebService(userAgent=self.user_agent, host=re.sub(r'^http://', '', server), username=username, password=password)
         self.q = Query(self.ws)
+
     def get_release(self, gid):
         q = Query(self.ws)
         inc = ReleaseIncludes(tracks=True, isrcs=True)
         return q.getReleaseById(gid, include=inc)
+
     def submit_isrcs(self, tracks2isrcs):
         q = Query(self.ws)
         q.submitISRCs(tracks2isrcs)
 
+
 def isrc_valid(isrc):
     return re.match(r'[A-Z]{2}[A-Z0-9]{3}[0-9]{7}', isrc)
+
 
 class ZeroInch(object):
     def __init__(self):
@@ -52,11 +57,13 @@ class ZeroInch(object):
         self.b.set_handle_robots(False)
         self.b.set_debug_redirects(False)
         self.b.set_debug_http(False)
+
     def url(self, path, **kwargs):
         query = ''
         if kwargs:
             query = '?' + urllib.urlencode([(k, v.encode('utf8')) for (k, v) in kwargs.items()])
         return self.server + path + query
+
     def _get_pages(self, location, **kwargs):
         while True:
             self.b.open(self.url(location, **kwargs))
@@ -67,15 +74,18 @@ class ZeroInch(object):
                 break
             page_cur, page_max = (int(x) for x in m.groups())
             if page_cur < page_max:
-                kwargs['page'] = str(page_cur+1)
+                kwargs['page'] = str(page_cur + 1)
             else:
                 break
+
     def get_artists(self, location, **kwargs):
         for page in self._get_pages(location, **kwargs):
             yield sorted(set(re.findall(ur'<a href="/artist/(.+?)[/"]', page)))
+
     def get_releases(self, artist):
         for page in self._get_pages('/artist/' + artist):
-            yield sorted(set(re.findall(ur'<a href="/artist/'+re.escape(artist)+ur'/(?:album|maxi|ep)/[^/]+/([0-9]+)', page)))
+            yield sorted(set(re.findall(ur'<a href="/artist/' + re.escape(artist) + ur'/(?:album|maxi|ep)/[^/]+/([0-9]+)', page)))
+
     def get_release(self, artist, release):
         self.b.open(self.url('/artist/' + artist + '/album/' + release))
         page = self.b.response().read()
@@ -83,6 +93,7 @@ class ZeroInch(object):
         identifier = m.group(1) if m else None
         tracks = list(re.findall(ur'<span class="listtext">\s*<a[^<>]*?href="/artist/[^/]+/track/[^/]+/([0-9]+(?:\?trackNo=[0-9]+)?)[^<>]*?>[^<>]*?</a>\s*</span>', page, re.DOTALL))
         return (identifier, tracks)
+
     def get_track(self, artist, track):
         try:
             self.b.open(self.url('/artist/' + artist + '/track/' + track))
@@ -108,8 +119,9 @@ zeroinch = ZeroInch()
 mb = MusicBrainzClient(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
 ws = MusicBrainzWebservice(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
 
+
 def identify_isrc_edit(isrcs):
-    return lambda edit_nr, text: set(isrcs) == set(re.findall(r'<a href="'+cfg.MB_SITE+r'/isrc/([A-Z0-9]{12})">', text))
+    return lambda edit_nr, text: set(isrcs) == set(re.findall(r'<a href="' + cfg.MB_SITE + r'/isrc/([A-Z0-9]{12})">', text))
 
 isrc_submitted = set(url for url, in db.execute('''SELECT url FROM bot_isrc_zeroinch_submitted'''))
 isrc_missing = set(url for url, in db.execute('''SELECT url FROM bot_isrc_zeroinch_missing'''))

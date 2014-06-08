@@ -65,7 +65,7 @@ WHERE
         ((a.type IS NULL OR a.type = 2) AND (a.begin_date_year IS NULL))
     ) AND
     l.edits_pending = 0 AND
-    u.url LIKE 'http://"""+wp_lang+""".wikipedia.org/wiki/%%'
+    u.url LIKE 'http://""" + wp_lang + """.wikipedia.org/wiki/%%'
     AND a.edits_pending = 0
 ORDER BY b.processed NULLS FIRST, a.id
 LIMIT 750
@@ -88,6 +88,7 @@ for id, code in db.execute("SELECT id, lower(name) FROM gender"):
 artist_type_ids = {}
 for id, code in db.execute("SELECT id, lower(name) FROM artist_type"):
     artist_type_ids[code] = id
+
 
 def main():
     seen = set()
