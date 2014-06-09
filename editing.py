@@ -175,7 +175,6 @@ class MusicBrainzClient(object):
              "rel-editor.edit_note": edit_note,
              "rel-editor.as_auto_editor": auto and 1 or 0}
         dta.update(("rel-editor.rels.0.entity." + `x`+"." + k, v) for x in xrange(2) for (k, v) in [entity0, entity1][x].iteritems())
-        print dta
         try:
             self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
         except urllib2.HTTPError, e:
