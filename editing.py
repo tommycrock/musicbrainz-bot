@@ -297,22 +297,36 @@ class MusicBrainzClient(object):
             return
         return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-work.', auto, edit_note)
 
-    def edit_relationship(self, rel_id, entity0_type, entity1_type, old_link_type_id, new_link_type_id, attributes, begin_date, end_date, edit_note, auto=False):
-        self.b.open(self.url("/edit/relationship/edit", id=str(rel_id), type0=entity0_type, type1=entity1_type))
-        self._select_form("/edit")
-        if self.b["ar.link_type_id"] == [str(new_link_type_id)] and new_link_type_id != old_link_type_id:
-            print " * already set, not changing"
-            return
-        if self.b["ar.link_type_id"] != [str(old_link_type_id)]:
-            print " * value has changed, aborting"
-            return
-        self.b["ar.link_type_id"] = [str(new_link_type_id)]
-        for k, v in attributes.items():
-            self.b["ar.attrs." + k] = v
-        for k, v in begin_date.items():
-            self.b["ar.period.begin_date." + k] = str(v)
-        for k, v in end_date.items():
-            self.b["ar.period.end_date." + k] = str(v)
+    def edit_relationship(self, rel_id, entity0_id , entity0_type , entity1_id , entity1_type, link_type_id, attributes, begin_date, end_date, edit_note, auto=False):
+        try:
+            self.b.open(self.url("/relationship-editor"), data=urllib.urlencode({
+                "rel-editor.rels.0.action":"edit",
+                "rel-editor.rels.0.id":rel_id,
+                "rel-editor.rels.0.link_type":link_type_id,
+                "rel-editor.rels.0.entity.0.gid":entity0_id,
+                "rel-editor.rels.0.entity.0.type":entity0_type,
+                "rel-editor.rels.0.entity.0.gid":entity1_id,
+                "rel-editor.rels.0.entity.0.type":entity1_type,
+                for k, v in attributes.items():
+                    "rel-editor.rels.0.attrs." + k:str(v)
+                for k, v in begin_date.items():
+                    "rel-editor.rels.0. begin_date." + k:str(v)
+                for k, v in end_date.items():
+                    "rel-editor.rels.0. end_date." + k:str(v)
+                "rel-editor.edit-note":edit_note,
+                "rel-editor.as_auto_editor":auto and 1 or 0}))
+        except urllib2.HTTPError, e:
+            if e.getcode()!=400:
+                raise Exception('unable to post edit', e)
+        try:
+            jmsg = json.load(self.b.response())
+        except ValueError, e:
+            raise Exception('unable to parse response as JSON', e)
+        if not jmsg.has_key('edits') or jmsg.has_key('error'):
+            raise Exception('unable to post edit', jmsg)
+        else:
+            if jmsg["edits"][0]["message"]=="no changes":
+                return False
         return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.', auto, edit_note, "exists with these attributes")
 
     def remove_relationship(self, rel_id, entity0_type, entity1_type, edit_note):
