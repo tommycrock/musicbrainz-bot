@@ -14,13 +14,14 @@ db.execute("SET search_path TO musicbrainz, %s" % cfg.BOT_SCHEMA_DB)
 mb = MusicBrainzClient(cfg.MB_USERNAME, cfg.MB_PASSWORD, cfg.MB_SITE)
 
 query = """
-    SELECT DISTINCT r.id, r.gid, r.name, r.comment, lrw.id AS rel_id, lt.id AS link_type, r.artist_credit
+    SELECT DISTINCT r.id, r.gid AS r_gid, w.gid AS w_gid, r.name, r.comment, lrw.id AS rel_id, lt.id AS link_type, r.artist_credit
     FROM recording r
         JOIN l_recording_work lrw ON lrw.entity0 = r.id
         JOIN link l ON l.id = lrw.link
         JOIN link_type lt ON l.link_type = lt.id
         JOIN link_attribute la ON la.link = l.id
         JOIN link_attribute_type lat ON la.attribute_type = lat.id AND lat.name = 'live'
+        JOIN work w ON lrw.entity1 = w.id
     WHERE r.comment ~ E'live, \\\\d{4}(-\\\\d{2})?(-\\\\d{2})?:'
         AND l.begin_date_year IS NULL
         AND l.end_date_year IS NULL
@@ -46,11 +47,14 @@ for recording in db.execute(query):
     if m.group(3) is not None:
         date['day'] = int(m.group(3))
   
-    colored_out(bcolors.OKBLUE, 'Setting performance relationships dates of http://musicbrainz.org/recording/%s "%s (%s)"' % (recording['gid'], recording['name'], recording['comment']))
+    colored_out(bcolors.OKBLUE, 'Setting performance relationships dates of http://musicbrainz.org/recording/%s "%s (%s)"' % (recording['r_gid'], recording['name'], recording['comment']))
 
     attributes = {}
     edit_note = 'Setting relationship dates from recording comment: "%s"' % recording['comment']
     colored_out(bcolors.NONE, " * new date:", date)
     
-    time.sleep(15)
-    mb.edit_relationship(recording['rel_id'], 'recording', 'work', recording['link_type'], recording['link_type'], attributes, date, date, edit_note, True)
+    entity0 = {'type': 'recording', 'gid': recording['r_gid']}
+    entity1 = {'type': 'work', 'gid': recording['w_gid']}
+
+    time.sleep(2)
+    mb.edit_relationship(recording['rel_id'], entity0, entity1, recording['link_type'], attributes, date, date, edit_note, True)

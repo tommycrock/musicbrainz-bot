@@ -169,13 +169,21 @@ class MusicBrainzClient(object):
         else:
             return self._check_response()
 
-    def _relationship_editor_webservice_action(self, action, link_type, edit_note, auto, entity0, entity1):
-        dta = {"rel-editor.rels.0.action": action,
-             "rel-editor.rels.0.link_type": link_type,
-             "rel-editor.edit_note": edit_note,
-             "rel-editor.as_auto_editor": auto and 1 or 0}
+    def _relationship_editor_webservice_action(self, action, rel_id, link_type, edit_note, auto, entity0, entity1, attributes={}, begin_date={}, end_date={}):
+        if (action == "edit" or action == "delete") and rel_id is None:
+            raise Exception('Can''t ' + action + ' relationship: no Id has been provided')
+        prefix = "rel-editor."
+        dta = {prefix + "rels.0.action": action,
+             prefix + "rels.0.link_type": link_type,
+             prefix + "edit_note": edit_note.encode('utf-8'),
+             prefix + "as_auto_editor": auto and 1 or 0}
+        if rel_id:
+            dta[prefix + "rels.0.id"] = rel_id
         entities = sorted([entity0, entity1], key=lambda entity: entity['type'])
-        dta.update(("rel-editor.rels.0.entity." + `x`+"." + k, v) for x in xrange(2) for (k, v) in entities[x].iteritems())
+        dta.update((prefix + "rels.0.entity." + `x`+"." + k, v) for x in xrange(2) for (k, v) in entities[x].iteritems())
+        dta.update((prefix + "rels.0.attrs." + k, str(v)) for k, v in attributes.items())
+        dta.update((prefix + "rels.0.period.begin_date." + k, str(v)) for k, v in begin_date.items())
+        dta.update((prefix + "rels.0.period.end_date." + k, str(v)) for k, v in end_date.items())
         try:
             self.b.open(self.url("/relationship-editor"), data=urllib.urlencode(dta))
         except urllib2.HTTPError, e:
@@ -194,7 +202,7 @@ class MusicBrainzClient(object):
 
     def add_url(self, entity_type, entity_id, link_type, url, edit_note='', auto=False):
         return self._relationship_editor_webservice_action(
-            "add", link_type, edit_note, auto,
+            "add", None, link_type, edit_note, auto,
             {"gid": entity_id, "type": entity_type},
             {"url": url, "type": "url"})
 
@@ -298,23 +306,8 @@ class MusicBrainzClient(object):
             return
         return self._edit_note_and_auto_editor_and_submit_and_check_response('edit-work.', auto, edit_note)
 
-    def edit_relationship(self, rel_id, entity0_type, entity1_type, old_link_type_id, new_link_type_id, attributes, begin_date, end_date, edit_note, auto=False):
-        self.b.open(self.url("/edit/relationship/edit", id=str(rel_id), type0=entity0_type, type1=entity1_type))
-        self._select_form("/edit")
-        if self.b["ar.link_type_id"] == [str(new_link_type_id)] and new_link_type_id != old_link_type_id:
-            print " * already set, not changing"
-            return
-        if self.b["ar.link_type_id"] != [str(old_link_type_id)]:
-            print " * value has changed, aborting"
-            return
-        self.b["ar.link_type_id"] = [str(new_link_type_id)]
-        for k, v in attributes.items():
-            self.b["ar.attrs." + k] = v
-        for k, v in begin_date.items():
-            self.b["ar.period.begin_date." + k] = str(v)
-        for k, v in end_date.items():
-            self.b["ar.period.end_date." + k] = str(v)
-        return self._edit_note_and_auto_editor_and_submit_and_check_response('ar.', auto, edit_note, "exists with these attributes")
+    def edit_relationship(self, rel_id, entity0, entity1, link_type, attributes, begin_date, end_date, edit_note, auto=False):
+        return self._relationship_editor_webservice_action('edit', rel_id, link_type, edit_note, auto, entity0, entity1, attributes, begin_date, end_date)
 
     def remove_relationship(self, rel_id, entity0_type, entity1_type, edit_note):
         self.b.open(self.url("/edit/relationship/delete", id=str(rel_id), type0=entity0_type, type1=entity1_type))
