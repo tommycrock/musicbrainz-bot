@@ -245,7 +245,8 @@ def submit_cover_art(release, url, types):
     else:
         colored_out(bcolors.OKGREEN, " * Adding " + ",".join(types) + (" " if len(types) > 0 else "") + "cover art '%s'" % (url,))
         if 'discogs' in url:
-            resp, content = discogs_oauth_client.request(url, 'GET')
+            headers = {'user-agent': 'MusicBrainzBot/0.1 +https://github.com/murdos/musicbrainz-bot'}
+            resp, content = discogs_oauth_client.request(url, 'GET', headers=headers)
         else:
             content = urllib2.urlopen(url).read()
         image_file = tempfile.NamedTemporaryFile(delete=False)
